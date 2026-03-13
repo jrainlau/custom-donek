@@ -266,7 +266,7 @@ export default function SmartPalette({
               e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
             }}
           >
-            生成配色
+            智能配色
           </button>
         </div>
 

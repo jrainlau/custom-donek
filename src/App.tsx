@@ -104,7 +104,7 @@ function App() {
   const [seedError, setSeedError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // 种子颜色变化时防抖生成配色
+  // 种子颜色变化时防抖智能配色
   const handleSeedColorChange = useCallback(
     (hex: string) => {
       setSeedColor(hex)
@@ -126,7 +126,7 @@ function App() {
     []
   )
 
-  // 手动触发生成配色
+  // 手动触发智能配色
   const handleGenerate = useCallback(() => {
     const result = generateM3Palette(seedColor)
     if (result) {

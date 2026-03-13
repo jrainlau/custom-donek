@@ -38,7 +38,7 @@
 
 - [ ] 6. 将 `SmartPalette.tsx` 改造为 M3 风格
    - 标题改用 M3 Title Medium 字体规范
-   - "生成配色"按钮改为 M3 Filled Button 样式（`var(--md-sys-color-primary)` 背景、`var(--md-sys-color-on-primary)` 文字、圆角 20px、hover 时添加 state layer）
+   - "智能配色"按钮改为 M3 Filled Button 样式（`var(--md-sys-color-primary)` 背景、`var(--md-sys-color-on-primary)` 文字、圆角 20px、hover 时添加 state layer）
    - 4 个色块卡片的 border/boxShadow 改用 M3 token（`outline-variant`、`elevation-level1` 等）
    - 拖拽选中态高亮色改为 `var(--md-sys-color-primary)` 
    - _需求：4.2、4.3、4.10_

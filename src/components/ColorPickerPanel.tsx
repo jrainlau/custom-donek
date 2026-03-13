@@ -233,7 +233,7 @@ export default function ColorPickerPanel({
               flexShrink: 0,
             }}
           />
-          {/* 生成配色按钮 */}
+          {/* 智能配色按钮 */}
           <button
             onClick={onGenerate}
             style={{
@@ -255,7 +255,7 @@ export default function ColorPickerPanel({
               e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
             }}
           >
-            生成配色
+            智能配色
           </button>
         </div>
       </div>

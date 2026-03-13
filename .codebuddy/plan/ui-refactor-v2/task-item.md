@@ -8,7 +8,7 @@
 
 - [ ] 2. 移除智能配色独立面板，将种子颜色 + 生成按钮集成到颜色配置标题栏
   - [ ] 2.1 在 `ColorPickerPanel.tsx` 中新增 props：`seedColor`、`onSeedColorChange`、`onGenerate`、`showSeedPicker`、`onToggleSeedPicker`，以及可选的 `error` 字段
-    - 将标题栏 `<h3>` 改为 flex 行布局，左侧保留"🎨 颜色配置"标题，右侧放置种子颜色色块（40×40px，圆角，可点击展开/收起）和"生成配色"按钮（M3 Filled Tonal 样式）
+    - 将标题栏 `<h3>` 改为 flex 行布局，左侧保留"🎨 颜色配置"标题，右侧放置种子颜色色块（40×40px，圆角，可点击展开/收起）和"智能配色"按钮（M3 Filled Tonal 样式）
     - 当 `showSeedPicker` 为 true 时，在标题栏下方渲染 `HexColorPicker`（从 `react-colorful` 导入），宽度 100%、高度 160px
     - 如有 `error` 则显示错误提示条
     - _需求：1.2、1.3、1.4_

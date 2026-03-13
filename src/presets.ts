@@ -3,6 +3,14 @@ import type { ColorScheme } from './types'
 /** 10 套预设配色模板 */
 export const PRESET_SCHEMES: ColorScheme[] = [
   {
+    id: 'preset-9',
+    name: '樱花粉雪',
+    topPrimary: '#FFB7C5',
+    topSecondary: '#FFFFFF',
+    basePattern: '#2E2E2E',
+    baseBg: '#FF69B4',
+  },
+  {
     id: 'preset-1',
     name: '苹果肉桂',
     topPrimary: '#D34937',
@@ -65,14 +73,6 @@ export const PRESET_SCHEMES: ColorScheme[] = [
     topSecondary: '#F5E6CA',
     basePattern: '#3C2415',
     baseBg: '#A8C97F',
-  },
-  {
-    id: 'preset-9',
-    name: '樱花粉雪',
-    topPrimary: '#FFB7C5',
-    topSecondary: '#FFFFFF',
-    basePattern: '#2E2E2E',
-    baseBg: '#FF69B4',
   },
   {
     id: 'preset-10',

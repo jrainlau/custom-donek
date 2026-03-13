@@ -49,8 +49,8 @@ export default function SmartPalette({
   const slots: ColorSlot[] = [
     { key: 'topPrimary', label: '板面背景', color: topPrimary },
     { key: 'topSecondary', label: '板面 logo', color: topSecondary },
-    { key: 'basePattern', label: '板底 logo', color: basePattern },
-    { key: 'baseBg', label: '板底背景', color: baseBg },
+    { key: 'basePattern', label: '板底背景', color: basePattern },
+    { key: 'baseBg', label: '板底 logo', color: baseBg },
   ]
 
   /**

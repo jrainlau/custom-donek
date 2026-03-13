@@ -67,13 +67,13 @@ export default function SvgPreview({
       // compact 模式（移动端）：SVG 保持原始方向，旋转由父元素 CSS 完成
       svg = svg.replace(
         '<svg',
-        `<svg id="${instanceId}" style="width:100%;height:100%;display:block;"`
+        `<svg id="${instanceId}" shape-rendering="geometricPrecision" style="width:100%;height:100%;display:block;"`
       )
     } else {
       // 普通模式：SVG 以高度为主约束
       svg = svg.replace(
         '<svg',
-        `<svg id="${instanceId}" style="width:auto;height:100%;max-width:100%;display:block;"`
+        `<svg id="${instanceId}" shape-rendering="geometricPrecision" style="width:auto;height:100%;max-width:100%;display:block;"`
       )
     }
     // 将内部固定 id 替换为唯一 id，避免多实例 clipPath 冲突

@@ -1,13 +1,13 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import SvgPreview from './components/SvgPreview'
 import ColorPickerPanel from './components/ColorPickerPanel'
-import SmartPalette from './components/SmartPalette'
 import PresetTemplates from './components/PresetTemplates'
 import UserSchemes from './components/UserSchemes'
 import ExportCanvas from './components/ExportCanvas'
 import { DEFAULT_SCHEME } from './presets'
 import type { ColorScheme } from './types'
 import type { M3ColorResult } from './m3color'
+import { generateM3Palette } from './m3color'
 
 // 导入 SVG 原始文本
 import topsheetSvgRaw from './assets/Topsheet.svg?raw'
@@ -26,6 +26,40 @@ function useMediaQuery(query: string): boolean {
 }
 
 function App() {
+  // header 和预览区高度动态获取
+  const headerRef = useRef<HTMLElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+  const placeholderRef = useRef<HTMLDivElement>(null)
+  const [headerHeight, setHeaderHeight] = useState(0)
+  const [previewHeight, setPreviewHeight] = useState(0)
+  // 桌面端：占位 div 的位置信息，用于 fixed 预览区对齐
+  const [placeholderRect, setPlaceholderRect] = useState<{ left: number; width: number } | null>(null)
+
+  useEffect(() => {
+    const headerEl = headerRef.current
+    const previewEl = previewRef.current
+    const placeholderEl = placeholderRef.current
+    const update = () => {
+      if (headerEl) setHeaderHeight(headerEl.offsetHeight)
+      if (previewEl) setPreviewHeight(previewEl.offsetHeight)
+      if (placeholderEl) {
+        const rect = placeholderEl.getBoundingClientRect()
+        setPlaceholderRect({ left: rect.left, width: rect.width })
+      }
+    }
+    update()
+    const ro = new ResizeObserver(() => update())
+    if (headerEl) ro.observe(headerEl)
+    if (previewEl) ro.observe(previewEl)
+    if (placeholderEl) ro.observe(placeholderEl)
+    // 窗口滚动不会影响 fixed 元素位置，但 resize 会改变占位 div 的位置
+    window.addEventListener('resize', update)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
   // 4 色状态
   const [topPrimary, setTopPrimary] = useState(DEFAULT_SCHEME.topPrimary)
   const [topSecondary, setTopSecondary] = useState(DEFAULT_SCHEME.topSecondary)
@@ -64,13 +98,58 @@ function App() {
     setActiveSchemeId(null)
   }, [])
 
-  // 智能配色回调：批量更新 4 色
-  const handleSmartColorsChange = useCallback((colors: M3ColorResult) => {
-    setTopPrimary(colors.topPrimary)
-    setTopSecondary(colors.topSecondary)
-    setBasePattern(colors.basePattern)
-    setBaseBg(colors.baseBg)
-    setActiveSchemeId(null)
+  // === 种子颜色状态（原 SmartPalette 逻辑迁移） ===
+  const [seedColor, setSeedColor] = useState('#6750A4')
+  const [showSeedPicker, setShowSeedPicker] = useState(false)
+  const [seedError, setSeedError] = useState<string | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 种子颜色变化时防抖生成配色
+  const handleSeedColorChange = useCallback(
+    (hex: string) => {
+      setSeedColor(hex)
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        const result = generateM3Palette(hex)
+        if (result) {
+          setSeedError(null)
+          setTopPrimary(result.topPrimary)
+          setTopSecondary(result.topSecondary)
+          setBasePattern(result.basePattern)
+          setBaseBg(result.baseBg)
+          setActiveSchemeId(null)
+        } else {
+          setSeedError('配色生成失败，请尝试其他颜色')
+        }
+      }, 150)
+    },
+    []
+  )
+
+  // 手动触发生成配色
+  const handleGenerate = useCallback(() => {
+    const result = generateM3Palette(seedColor)
+    if (result) {
+      setSeedError(null)
+      setTopPrimary(result.topPrimary)
+      setTopSecondary(result.topSecondary)
+      setBasePattern(result.basePattern)
+      setBaseBg(result.baseBg)
+      setActiveSchemeId(null)
+    } else {
+      setSeedError('配色生成失败，请尝试其他颜色')
+    }
+  }, [seedColor])
+
+  const handleToggleSeedPicker = useCallback(() => {
+    setShowSeedPicker((prev) => !prev)
+  }, [])
+
+  // 清理防抖定时器
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
   }, [])
 
   // 移动端检测
@@ -79,14 +158,14 @@ function App() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background: 'var(--md-sys-color-surface)',
-        padding: '0 0 40px',
       }}
     >
       {/* 顶部标题栏 */}
       {/* M3 Top App Bar */}
       <header
+        ref={headerRef}
         style={{
           background: 'var(--md-sys-color-surface)',
           padding: isMobile ? '12px 16px' : '16px 24px',
@@ -95,8 +174,11 @@ function App() {
           alignItems: 'center',
           justifyContent: 'space-between',
           boxShadow: 'var(--md-sys-elevation-level2)',
-          position: 'relative',
-          zIndex: 10,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
         }}
       >
         <div>
@@ -117,9 +199,19 @@ function App() {
               color: 'var(--md-sys-color-on-surface-variant)',
             }}
           >
-            滑雪板配色定制 Snowboard Color Customizer
+            滑雪板配色定制
           </p>
         </div>
+        {/* 导出按钮（集成到 header 右侧） */}
+        <ExportCanvas
+          topPrimary={topPrimary}
+          topSecondary={topSecondary}
+          basePattern={basePattern}
+          baseBg={baseBg}
+          topsheetSvg={topsheetSvgRaw}
+          baseSvg={baseSvgRaw}
+          isMobile={isMobile}
+        />
       </header>
 
       {/* 主体区域 */}
@@ -128,33 +220,49 @@ function App() {
           maxWidth: isMobile ? '100%' : '1400px',
           margin: '0 auto',
           padding: isMobile ? '0' : '24px 24px',
-          display: isMobile ? 'flex' : 'grid',
-          flexDirection: isMobile ? 'column' : undefined,
+          display: isMobile ? 'block' : 'grid',
           gridTemplateColumns: isMobile ? undefined : '2fr 3fr',
           gap: isMobile ? '0' : '24px',
           alignItems: 'start',
+          width: '100%',
+          boxSizing: 'border-box' as const,
+          paddingTop: isMobile ? '0' : `${headerHeight + 24}px`,
         }}
       >
         {/* ========== 预览区 ========== */}
+        {/* 桌面端：占位 div，为 grid 左列保留空间，同时提供位置信息给 fixed 预览区 */}
+        {!isMobile && (
+          <div
+            ref={placeholderRef}
+            style={{
+              height: `calc(100dvh - ${headerHeight + 48}px)`,
+              position: 'sticky',
+              top: headerHeight + 24,
+            }}
+          />
+        )}
+        {/* fixed 预览内容 */}
         <div
+          ref={previewRef}
           style={{
-          ...(isMobile
+            position: 'fixed' as const,
+            zIndex: 50,
+            boxSizing: 'border-box' as const,
+            ...(isMobile
               ? {
-                  position: 'sticky' as const,
-                  top: 0,
-                  zIndex: 50,
+                  top: headerHeight,
+                  left: 0,
+                  right: 0,
                   background: 'var(--md-sys-color-surface)',
                   boxShadow: 'var(--md-sys-elevation-level2)',
                   padding: '8px 16px',
-                  width: '100vw',
-                  left: 0,
-                  boxSizing: 'border-box' as const,
                   overflow: 'hidden' as const,
                 }
               : {
-                  position: 'sticky' as const,
-                  top: '24px',
-                  height: 'calc(100vh - 120px)',
+                  top: headerHeight + 24,
+                  left: placeholderRect ? placeholderRect.left : 0,
+                  width: placeholderRect ? placeholderRect.width : 'auto',
+                  height: `calc(100dvh - ${headerHeight + 48}px)`,
                 }),
           }}
         >
@@ -204,27 +312,12 @@ function App() {
             flexDirection: 'column',
             gap: isMobile ? '12px' : '24px',
             padding: isMobile ? '16px' : '0',
+            ...(isMobile
+              ? { marginTop: headerHeight + previewHeight }
+              : { gridColumnStart: 2 }),
           }}
         >
-          {/* 智能配色模块 */}
-          <div
-            style={{
-              background: 'var(--md-sys-color-surface-container-low)',
-              borderRadius: 'var(--md-sys-shape-corner-large)',
-              padding: '20px',
-              boxShadow: 'var(--md-sys-elevation-level1)',
-            }}
-          >
-            <SmartPalette
-              topPrimary={topPrimary}
-              topSecondary={topSecondary}
-              basePattern={basePattern}
-              baseBg={baseBg}
-              onColorsChange={handleSmartColorsChange}
-            />
-          </div>
-
-          {/* 手动颜色配置面板 */}
+          {/* 颜色配置面板（含种子颜色 + 拖拽排列） */}
           <div
             style={{
               background: 'var(--md-sys-color-surface-container-low)',
@@ -242,6 +335,12 @@ function App() {
               onTopSecondaryChange={handleTopSecondaryChange}
               onBasePatternChange={handleBasePatternChange}
               onBaseBgChange={handleBaseBgChange}
+              seedColor={seedColor}
+              onSeedColorChange={handleSeedColorChange}
+              onGenerate={handleGenerate}
+              showSeedPicker={showSeedPicker}
+              onToggleSeedPicker={handleToggleSeedPicker}
+              error={seedError}
             />
           </div>
 
@@ -257,6 +356,7 @@ function App() {
             <PresetTemplates
               activeSchemeId={activeSchemeId}
               onSelect={applyScheme}
+              isMobile={isMobile}
             />
           </div>
 
@@ -272,25 +372,6 @@ function App() {
             <UserSchemes
               currentColors={{ topPrimary, topSecondary, basePattern, baseBg }}
               onSelect={applyScheme}
-            />
-          </div>
-
-          {/* 导出按钮 */}
-          <div
-            style={{
-              background: 'var(--md-sys-color-surface-container-low)',
-              borderRadius: 'var(--md-sys-shape-corner-large)',
-              padding: '20px',
-              boxShadow: 'var(--md-sys-elevation-level1)',
-            }}
-          >
-            <ExportCanvas
-              topPrimary={topPrimary}
-              topSecondary={topSecondary}
-              basePattern={basePattern}
-              baseBg={baseBg}
-              topsheetSvg={topsheetSvgRaw}
-              baseSvg={baseSvgRaw}
             />
           </div>
         </div>

@@ -35,11 +35,11 @@ export function rgbToHex(r: number, g: number, b: number): string {
 /**
  * 格式化为 RGB 显示文本
  * @param hex - 如 "#D34937"
- * @returns 如 "RGB(211, 73, 55)"
+ * @returns 如 "211,73,55"
  */
 export function hexToRgbString(hex: string): string {
   const { r, g, b } = hexToRgb(hex)
-  return `RGB(${r}, ${g}, ${b})`
+  return `${r},${g},${b}`
 }
 
 /**

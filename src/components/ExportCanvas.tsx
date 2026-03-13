@@ -9,6 +9,7 @@ interface ExportCanvasProps {
   baseBg: string
   topsheetSvg: string
   baseSvg: string
+  isMobile?: boolean
 }
 
 export default function ExportCanvas({
@@ -18,6 +19,7 @@ export default function ExportCanvas({
   baseBg,
   topsheetSvg,
   baseSvg,
+  isMobile = false,
 }: ExportCanvasProps) {
   const exportRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState(false)
@@ -78,42 +80,80 @@ export default function ExportCanvas({
   const colors = [
     { label: '板面背景', hex: topPrimary },
     { label: '板面 logo', hex: topSecondary },
-    { label: '板底 logo', hex: basePattern },
-    { label: '板底背景', hex: baseBg },
+    { label: '板底背景', hex: basePattern },
+    { label: '板底 logo', hex: baseBg },
   ]
 
   return (
     <div>
-      {/* 导出按钮 */}
-      <button
-        onClick={handleExport}
-        disabled={exporting}
-        style={{
-          width: '100%',
-          padding: '12px 24px',
-          borderRadius: '20px',
-          border: 'none',
-          background: exporting
-            ? 'var(--md-sys-color-surface-container-highest)'
-            : 'var(--md-sys-color-primary)',
-          color: exporting ? 'var(--md-sys-color-on-surface-variant)' : 'var(--md-sys-color-on-primary)',
-          font: 'var(--md-sys-typescale-label-large)',
-          cursor: exporting ? 'not-allowed' : 'pointer',
-          transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
-          boxShadow: exporting ? 'none' : 'var(--md-sys-elevation-level1)',
-          letterSpacing: '0.5px',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-        onMouseEnter={(e) => {
-          if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
-        }}
-        onMouseLeave={(e) => {
-          if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
-        }}
-      >
-        {exporting ? '⏳ 正在导出...' : '📸 导出效果图 PNG'}
-      </button>
+      {/* 导出按钮 - 桌面端/移动端双模式 */}
+      {isMobile ? (
+        /* 移动端：圆形图标按钮 */
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          title="导出 PNG"
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            border: 'none',
+            background: exporting
+              ? 'var(--md-sys-color-surface-container-highest)'
+              : 'var(--md-sys-color-primary)',
+            color: exporting
+              ? 'var(--md-sys-color-on-surface-variant)'
+              : 'var(--md-sys-color-on-primary)',
+            cursor: exporting ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+            boxShadow: exporting ? 'none' : 'var(--md-sys-elevation-level1)',
+            padding: 0,
+            flexShrink: 0,
+          }}
+        >
+          {exporting ? (
+            <span style={{ fontSize: '16px' }}>⏳</span>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 20h14v-2H5v2zm7-18v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </button>
+      ) : (
+        /* 桌面端：文字按钮 */
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          style={{
+            padding: '8px 20px',
+            borderRadius: '20px',
+            border: 'none',
+            background: exporting
+              ? 'var(--md-sys-color-surface-container-highest)'
+              : 'var(--md-sys-color-secondary-container)',
+            color: exporting
+              ? 'var(--md-sys-color-on-surface-variant)'
+              : 'var(--md-sys-color-on-secondary-container)',
+            font: 'var(--md-sys-typescale-label-large)',
+            cursor: exporting ? 'not-allowed' : 'pointer',
+            transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+            boxShadow: exporting ? 'none' : 'var(--md-sys-elevation-level1)',
+            letterSpacing: '0.5px',
+            whiteSpace: 'nowrap',
+          }}
+          onMouseEnter={(e) => {
+            if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
+          }}
+          onMouseLeave={(e) => {
+            if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
+          }}
+        >
+          {exporting ? '⏳ 导出中...' : '📸 导出 PNG'}
+        </button>
+      )}
 
       {/* 隐藏的导出画布区域 */}
       <div

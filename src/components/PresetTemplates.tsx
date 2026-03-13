@@ -4,11 +4,13 @@ import { PRESET_SCHEMES } from '../presets'
 interface PresetTemplatesProps {
   activeSchemeId: string | null
   onSelect: (scheme: ColorScheme) => void
+  isMobile?: boolean
 }
 
 export default function PresetTemplates({
   activeSchemeId,
   onSelect,
+  isMobile = false,
 }: PresetTemplatesProps) {
   return (
     <div>
@@ -26,7 +28,7 @@ export default function PresetTemplates({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(160px, 1fr))',
           gap: '12px',
         }}
       >

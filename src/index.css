@@ -130,16 +130,21 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
+  overscroll-behavior: none;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: none;
 }
 
+/* 确保 #root 容器不产生额外高度 */
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ============================================

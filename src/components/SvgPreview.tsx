@@ -36,10 +36,30 @@ export default function SvgPreview({
     let svg = svgRaw
     // 移除 XML 声明
     svg = svg.replace(/<\?xml[^?]*\?>\s*/g, '')
-    // 为 SVG 标签添加唯一 ID，并确保 SVG 自适应容器
+    // 移除注释
+    svg = svg.replace(/<!--[\s\S]*?-->\s*/g, '')
+
+    // 提取原始 width/height 用于构建 viewBox（如缺失）
+    const wMatch = svg.match(/\bwidth="(\d+)"/)
+    const hMatch = svg.match(/\bheight="(\d+)"/)
+    const hasViewBox = /viewBox/.test(svg)
+
+    // 移除 SVG 标签上的固定 width/height，让 CSS 控制尺寸
+    svg = svg.replace(/(<svg[^>]*?)\s+width="[^"]*"/g, '$1')
+    svg = svg.replace(/(<svg[^>]*?)\s+height="[^"]*"/g, '$1')
+
+    // 如果没有 viewBox，根据原始 width/height 补充
+    if (!hasViewBox && wMatch && hMatch) {
+      svg = svg.replace(
+        '<svg',
+        `<svg viewBox="0 0 ${wMatch[1]} ${hMatch[1]}"`
+      )
+    }
+
+    // 添加唯一 ID 和自适应样式
     svg = svg.replace(
       '<svg',
-      `<svg id="${instanceId}" style="width:100%;height:auto;display:block;"`
+      `<svg id="${instanceId}" style="width:auto;height:100%;max-width:100%;display:block;"`
     )
     // 将内部固定 id 替换为唯一 id，避免多实例 clipPath 冲突
     svg = svg.replace(/id="board-outline"/g, `id="board-outline-${instanceId}"`)
@@ -91,8 +111,10 @@ export default function SvgPreview({
         flexDirection: 'column',
         alignItems: 'center',
         gap: '8px',
-        flex: 1,
+        flex: '1 1 0',
         minWidth: 0,
+        height: '100%',
+        minHeight: 0,
       }}
     >
       {label && (
@@ -102,6 +124,7 @@ export default function SvgPreview({
             fontWeight: 600,
             color: '#555',
             letterSpacing: '0.5px',
+            flexShrink: 0,
           }}
         >
           {label}
@@ -110,13 +133,20 @@ export default function SvgPreview({
       <div
         ref={containerRef}
         style={{
-          width: '100%',
+          flex: '1 1 0',
+          minHeight: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           borderRadius: '12px',
           boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
           background: '#fff',
           padding: '8px',
           transition: 'box-shadow 0.2s ease',
-          overflow: 'visible',
+          overflow: 'hidden',
+          width: 'fit-content',
+          maxWidth: '100%',
+          alignSelf: 'center',
         }}
         dangerouslySetInnerHTML={{ __html: processedSvg }}
       />

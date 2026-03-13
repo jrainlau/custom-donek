@@ -117,11 +117,12 @@ function App() {
           alignItems: 'start',
         }}
       >
-        {/* ========== 左侧：SVG 预览区（sticky 固定） ========== */}
+        {/* ========== 左侧：SVG 预览区（sticky 固定，适配屏幕高度） ========== */}
         <div
           style={{
             position: 'sticky',
             top: '24px',
+            height: 'calc(100vh - 120px)',
           }}
         >
           <div
@@ -129,11 +130,13 @@ function App() {
               display: 'flex',
               gap: '20px',
               justifyContent: 'center',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               padding: '24px',
               background: 'rgba(255,255,255,0.5)',
               borderRadius: '16px',
               boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              height: '100%',
+              boxSizing: 'border-box',
             }}
           >
             <SvgPreview

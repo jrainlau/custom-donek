@@ -5,7 +5,7 @@
   - .color-primary: 大面积主体色（原 #000000）
   - .color-secondary: 文字/细节色（原 #F5F5F5 及其他灰度值）
 -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="190" height="1000">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="190" height="1000" viewBox="0 0 190 1000">
 <style>
   .color-primary { fill: #000000; }
   .color-secondary { fill: #F5F5F5; }

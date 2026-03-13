@@ -76,10 +76,10 @@ export default function ExportCanvas({
   }, [exporting])
 
   const colors = [
-    { label: '板面主体色', hex: topPrimary },
-    { label: '板面细节色', hex: topSecondary },
-    { label: '板底图案色', hex: basePattern },
-    { label: '板底背景色', hex: baseBg },
+    { label: '板面背景', hex: topPrimary },
+    { label: '板面 logo', hex: topSecondary },
+    { label: '板底 logo', hex: basePattern },
+    { label: '板底背景', hex: baseBg },
   ]
 
   return (
@@ -91,18 +91,25 @@ export default function ExportCanvas({
         style={{
           width: '100%',
           padding: '12px 24px',
-          borderRadius: '10px',
+          borderRadius: '20px',
           border: 'none',
           background: exporting
-            ? '#aaa'
-            : 'linear-gradient(135deg, #7c6f5b, #a0926e)',
-          color: '#fff',
-          fontSize: '15px',
-          fontWeight: 700,
+            ? 'var(--md-sys-color-surface-container-highest)'
+            : 'var(--md-sys-color-primary)',
+          color: exporting ? 'var(--md-sys-color-on-surface-variant)' : 'var(--md-sys-color-on-primary)',
+          font: 'var(--md-sys-typescale-label-large)',
           cursor: exporting ? 'not-allowed' : 'pointer',
-          transition: 'all 0.2s',
-          boxShadow: '0 4px 12px rgba(124,111,91,0.3)',
-          letterSpacing: '1px',
+          transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+          boxShadow: exporting ? 'none' : 'var(--md-sys-elevation-level1)',
+          letterSpacing: '0.5px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+        onMouseEnter={(e) => {
+          if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
+        }}
+        onMouseLeave={(e) => {
+          if (!exporting) e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
         }}
       >
         {exporting ? '⏳ 正在导出...' : '📸 导出效果图 PNG'}

@@ -49,9 +49,8 @@ function ColorItem({ label, color, onChange }: ColorItemProps) {
     <div style={{ marginBottom: '16px' }}>
       <div
         style={{
-          fontSize: '13px',
-          fontWeight: 600,
-          color: '#666',
+          font: 'var(--md-sys-typescale-label-medium)',
+          color: 'var(--md-sys-color-on-surface-variant)',
           marginBottom: '8px',
         }}
       >
@@ -66,11 +65,11 @@ function ColorItem({ label, color, onChange }: ColorItemProps) {
           borderRadius: '8px',
           backgroundColor: color,
           cursor: 'pointer',
-          border: '2px solid rgba(0,0,0,0.1)',
-          transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+          border: `2px solid var(${showPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: showPicker
-            ? '0 0 0 3px rgba(100,100,255,0.3)'
-            : '0 2px 4px rgba(0,0,0,0.1)',
+            ? '0 0 0 3px var(--md-sys-color-primary-container)'
+            : 'var(--md-sys-elevation-level1)',
         }}
       />
       {/* RGB 值展示 + 可复制 */}
@@ -95,8 +94,8 @@ function ColorItem({ label, color, onChange }: ColorItemProps) {
               flex: 1,
               fontSize: '12px',
               padding: '2px 6px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
+              border: '1px solid var(--md-sys-color-outline)',
+              borderRadius: 'var(--md-sys-shape-corner-extra-small)',
               outline: 'none',
               fontFamily: 'monospace',
             }}
@@ -112,7 +111,7 @@ function ColorItem({ label, color, onChange }: ColorItemProps) {
             style={{
               fontSize: '12px',
               fontFamily: 'monospace',
-              color: '#888',
+              color: 'var(--md-sys-color-on-surface-variant)',
               cursor: 'pointer',
               userSelect: 'none',
               transition: 'color 0.15s',
@@ -123,8 +122,12 @@ function ColorItem({ label, color, onChange }: ColorItemProps) {
         )}
       </div>
       {/* 颜色选择器 */}
+      {/* 颜色选择器 - M3 动画过渡 */}
       {showPicker && (
-        <div style={{ marginTop: '8px' }}>
+        <div style={{
+          marginTop: '8px',
+          animation: 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}>
           <HexColorPicker
             color={color}
             onChange={onChange}
@@ -202,11 +205,10 @@ export default function ColorPickerPanel({
     <div>
       <h3
         style={{
-          fontSize: '16px',
-          fontWeight: 700,
-          color: '#333',
+          font: 'var(--md-sys-typescale-title-medium)',
+          color: 'var(--md-sys-color-on-surface)',
           marginBottom: '16px',
-          borderBottom: '2px solid #e8dcc8',
+          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
           paddingBottom: '8px',
         }}
       >
@@ -222,24 +224,23 @@ export default function ColorPickerPanel({
         <div>
           <div
             style={{
-              fontSize: '14px',
-              fontWeight: 700,
-              color: '#444',
+              font: 'var(--md-sys-typescale-label-large)',
+              color: 'var(--md-sys-color-on-surface)',
               marginBottom: '12px',
-              padding: '4px 8px',
-              background: 'rgba(0,0,0,0.04)',
+              padding: '6px 10px',
+              background: 'var(--md-sys-color-surface-container)',
               borderRadius: '6px',
             }}
           >
             板面 Topsheet
           </div>
           <ColorItem
-            label="主体色"
+            label="板面背景"
             color={topPrimary}
             onChange={onTopPrimaryChange}
           />
           <ColorItem
-            label="细节色"
+            label="板面 logo"
             color={topSecondary}
             onChange={onTopSecondaryChange}
           />
@@ -247,24 +248,23 @@ export default function ColorPickerPanel({
         <div>
           <div
             style={{
-              fontSize: '14px',
-              fontWeight: 700,
-              color: '#444',
+              font: 'var(--md-sys-typescale-label-large)',
+              color: 'var(--md-sys-color-on-surface)',
               marginBottom: '12px',
-              padding: '4px 8px',
-              background: 'rgba(0,0,0,0.04)',
+              padding: '6px 10px',
+              background: 'var(--md-sys-color-surface-container)',
               borderRadius: '6px',
             }}
           >
             板底 Base
           </div>
           <ColorItem
-            label="图案色"
+            label="板底 logo"
             color={basePattern}
             onChange={onBasePatternChange}
           />
           <ColorItem
-            label="背景色"
+            label="板底背景"
             color={baseBg}
             onChange={onBaseBgChange}
           />

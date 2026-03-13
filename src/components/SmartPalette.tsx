@@ -47,10 +47,10 @@ export default function SmartPalette({
 
   // 构建当前 4 色槽位
   const slots: ColorSlot[] = [
-    { key: 'topPrimary', label: '板面主体色', color: topPrimary },
-    { key: 'topSecondary', label: '板面细节色', color: topSecondary },
-    { key: 'basePattern', label: '板底图案色', color: basePattern },
-    { key: 'baseBg', label: '板底背景色', color: baseBg },
+    { key: 'topPrimary', label: '板面背景', color: topPrimary },
+    { key: 'topSecondary', label: '板面 logo', color: topSecondary },
+    { key: 'basePattern', label: '板底 logo', color: basePattern },
+    { key: 'baseBg', label: '板底背景', color: baseBg },
   ]
 
   /**
@@ -200,11 +200,10 @@ export default function SmartPalette({
     <div>
       <h3
         style={{
-          fontSize: '16px',
-          fontWeight: 700,
-          color: '#333',
+          font: 'var(--md-sys-typescale-title-medium)',
+          color: 'var(--md-sys-color-on-surface)',
           marginBottom: '16px',
-          borderBottom: '2px solid #e8dcc8',
+          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
           paddingBottom: '8px',
         }}
       >
@@ -215,9 +214,8 @@ export default function SmartPalette({
       <div style={{ marginBottom: '16px' }}>
         <div
           style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            color: '#666',
+            font: 'var(--md-sys-typescale-label-medium)',
+            color: 'var(--md-sys-color-on-surface-variant)',
             marginBottom: '8px',
           }}
         >
@@ -238,35 +236,34 @@ export default function SmartPalette({
               borderRadius: '12px',
               backgroundColor: seedColor,
               cursor: 'pointer',
-              border: '2px solid rgba(0,0,0,0.1)',
+              border: `2px solid var(${showPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
               boxShadow: showPicker
-                ? '0 0 0 3px rgba(100,100,255,0.3)'
-                : '0 2px 6px rgba(0,0,0,0.15)',
-              transition: 'box-shadow 0.2s ease',
+                ? '0 0 0 3px var(--md-sys-color-primary-container)'
+                : 'var(--md-sys-elevation-level1)',
+              transition: 'box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               flexShrink: 0,
             }}
           />
           <button
             onClick={handleApply}
             style={{
-              padding: '8px 20px',
-              borderRadius: '8px',
+              padding: '10px 24px',
+              borderRadius: '20px',
               border: 'none',
-              background: 'linear-gradient(135deg, #6750A4 0%, #9a82db 100%)',
-              color: '#fff',
-              fontSize: '13px',
-              fontWeight: 600,
+              background: 'var(--md-sys-color-primary)',
+              color: 'var(--md-sys-color-on-primary)',
+              font: 'var(--md-sys-typescale-label-large)',
               cursor: 'pointer',
-              transition: 'opacity 0.2s ease, transform 0.15s ease',
-              boxShadow: '0 2px 8px rgba(103, 80, 164, 0.3)',
+              transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
+              position: 'relative',
+              overflow: 'hidden',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.9'
-              e.currentTarget.style.transform = 'translateY(-1px)'
+              e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '1'
-              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
             }}
           >
             生成配色
@@ -289,12 +286,11 @@ export default function SmartPalette({
         <div
           style={{
             padding: '8px 12px',
-            borderRadius: '8px',
-            backgroundColor: '#fff3f3',
-            color: '#d32f2f',
-            fontSize: '12px',
+            borderRadius: 'var(--md-sys-shape-corner-small)',
+            backgroundColor: 'var(--md-sys-color-error-container)',
+            color: 'var(--md-sys-color-on-error-container)',
+            font: 'var(--md-sys-typescale-body-small)',
             marginBottom: '12px',
-            border: '1px solid #ffcdd2',
           }}
         >
           ⚠️ {error}
@@ -304,8 +300,8 @@ export default function SmartPalette({
       {/* 4 色块 - 可拖拽交换 */}
       <div
         style={{
-          fontSize: '12px',
-          color: '#999',
+          font: 'var(--md-sys-typescale-body-small)',
+          color: 'var(--md-sys-color-on-surface-variant)',
           marginBottom: '8px',
         }}
       >
@@ -335,20 +331,20 @@ export default function SmartPalette({
               onDragEnd={handleDragEnd}
               onClick={() => handleSlotClick(index)}
               style={{
-                borderRadius: '12px',
+                borderRadius: 'var(--md-sys-shape-corner-medium)',
                 backgroundColor: slot.color,
                 padding: '16px 12px',
                 cursor: 'grab',
                 border: isDragOver
-                  ? '2px dashed #6750A4'
+                  ? '2px dashed var(--md-sys-color-primary)'
                   : isSelected
-                    ? '2px solid #6750A4'
-                    : '2px solid rgba(0,0,0,0.08)',
+                    ? '2px solid var(--md-sys-color-primary)'
+                    : '2px solid var(--md-sys-color-outline-variant)',
                 boxShadow: isDragging
-                  ? '0 8px 24px rgba(0,0,0,0.3)'
+                  ? 'var(--md-sys-elevation-level4)'
                   : isDragOver
-                    ? '0 4px 12px rgba(103, 80, 164, 0.3)'
-                    : '0 2px 8px rgba(0,0,0,0.1)',
+                    ? 'var(--md-sys-elevation-level2)'
+                    : 'var(--md-sys-elevation-level1)',
                 transform: isDragging
                   ? 'scale(1.05) rotate(2deg)'
                   : 'scale(1)',

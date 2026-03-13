@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { SavedColorScheme, ColorScheme } from '../types'
 import { saveScheme, getAllSchemes, deleteScheme, isUsingFallback } from '../db'
-import { hexToRgbString } from '../utils'
 
 interface UserSchemesProps {
   currentColors: {
@@ -74,15 +73,14 @@ export default function UserSchemes({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginBottom: '12px',
-          borderBottom: '2px solid #e8dcc8',
+          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
           paddingBottom: '8px',
         }}
       >
         <h3
           style={{
-            fontSize: '16px',
-            fontWeight: 700,
-            color: '#333',
+            font: 'var(--md-sys-typescale-title-medium)',
+            color: 'var(--md-sys-color-on-surface)',
             margin: 0,
           }}
         >
@@ -91,18 +89,18 @@ export default function UserSchemes({
         <button
           onClick={() => setShowSaveDialog(true)}
           style={{
-            padding: '6px 16px',
-            borderRadius: '8px',
+            padding: '8px 20px',
+            borderRadius: '20px',
             border: 'none',
-            background: '#7c6f5b',
-            color: '#fff',
-            fontSize: '13px',
-            fontWeight: 600,
+            background: 'var(--md-sys-color-secondary-container)',
+            color: 'var(--md-sys-color-on-secondary-container)',
+            font: 'var(--md-sys-typescale-label-large)',
             cursor: 'pointer',
-            transition: 'background 0.2s',
+            transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+            boxShadow: 'var(--md-sys-elevation-level1)',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = '#5e5345')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = '#7c6f5b')}
+          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)')}
+          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)')}
         >
           保存当前配色
         </button>
@@ -111,11 +109,11 @@ export default function UserSchemes({
       {isFallback && (
         <div
           style={{
-            fontSize: '11px',
-            color: '#e67e22',
-            background: '#fef9e7',
-            padding: '6px 10px',
-            borderRadius: '6px',
+            font: 'var(--md-sys-typescale-body-small)',
+            color: 'var(--md-sys-color-error)',
+            background: 'var(--md-sys-color-error-container)',
+            padding: '8px 12px',
+            borderRadius: 'var(--md-sys-shape-corner-small)',
             marginBottom: '8px',
           }}
         >
@@ -143,14 +141,14 @@ export default function UserSchemes({
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: '#fff',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-high)',
+              borderRadius: 'var(--md-sys-shape-corner-extra-large)',
               padding: '24px',
               width: '360px',
-              boxShadow: '0 16px 40px rgba(0,0,0,0.2)',
+              boxShadow: 'var(--md-sys-elevation-level3)',
             }}
           >
-            <h4 style={{ margin: '0 0 16px', fontSize: '16px', color: '#333' }}>
+            <h4 style={{ margin: '0 0 16px', font: 'var(--md-sys-typescale-title-medium)', color: 'var(--md-sys-color-on-surface)' }}>
               保存配色方案
             </h4>
             {/* 预览色块 */}
@@ -175,7 +173,7 @@ export default function UserSchemes({
                     height: '36px',
                     borderRadius: '50%',
                     backgroundColor: c,
-                    border: '2px solid rgba(0,0,0,0.1)',
+                    border: '2px solid var(--md-sys-color-outline-variant)',
                   }}
                 />
               ))}
@@ -190,8 +188,8 @@ export default function UserSchemes({
               style={{
                 width: '100%',
                 padding: '10px 14px',
-                border: '2px solid #e0d6c2',
-                borderRadius: '8px',
+                border: '1px solid var(--md-sys-color-outline)',
+                borderRadius: 'var(--md-sys-shape-corner-small)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
@@ -208,11 +206,12 @@ export default function UserSchemes({
               <button
                 onClick={() => setShowSaveDialog(false)}
                 style={{
-                  padding: '8px 20px',
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  background: '#fff',
-                  fontSize: '13px',
+                  padding: '10px 24px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: 'var(--md-sys-color-primary)',
+                  font: 'var(--md-sys-typescale-label-large)',
                   cursor: 'pointer',
                 }}
               >
@@ -222,14 +221,14 @@ export default function UserSchemes({
                 onClick={handleSave}
                 disabled={!schemeName.trim()}
                 style={{
-                  padding: '8px 20px',
-                  borderRadius: '8px',
+                  padding: '10px 24px',
+                  borderRadius: '20px',
                   border: 'none',
-                  background: schemeName.trim() ? '#7c6f5b' : '#ccc',
-                  color: '#fff',
-                  fontSize: '13px',
-                  fontWeight: 600,
+                  background: schemeName.trim() ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-surface-container-highest)',
+                  color: schemeName.trim() ? 'var(--md-sys-color-on-primary)' : 'var(--md-sys-color-on-surface-variant)',
+                  font: 'var(--md-sys-typescale-label-large)',
                   cursor: schemeName.trim() ? 'pointer' : 'not-allowed',
+                  boxShadow: schemeName.trim() ? 'var(--md-sys-elevation-level1)' : 'none',
                 }}
               >
                 保存
@@ -244,8 +243,8 @@ export default function UserSchemes({
         <div
           style={{
             textAlign: 'center',
-            color: '#aaa',
-            fontSize: '13px',
+            color: 'var(--md-sys-color-on-surface-variant)',
+            font: 'var(--md-sys-typescale-body-medium)',
             padding: '20px 0',
           }}
         >
@@ -264,20 +263,20 @@ export default function UserSchemes({
               key={scheme.id}
               onClick={() => onSelect(scheme)}
               style={{
-                padding: '10px',
-                borderRadius: '10px',
-                background: 'rgba(255,255,255,0.7)',
-                border: '2px solid transparent',
+                padding: '12px',
+                borderRadius: 'var(--md-sys-shape-corner-medium)',
+                background: 'var(--md-sys-color-surface-container-low)',
+                border: '1px solid var(--md-sys-color-outline-variant)',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+                boxShadow: 'var(--md-sys-elevation-level1)',
                 position: 'relative',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
+                e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)'
+                e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
               }}
             >
               {/* 删除按钮 */}
@@ -285,30 +284,32 @@ export default function UserSchemes({
                 onClick={(e) => handleDelete(scheme.id, e)}
                 style={{
                   position: 'absolute',
-                  top: '4px',
-                  right: '4px',
-                  width: '20px',
-                  height: '20px',
+                  top: '6px',
+                  right: '6px',
+                  width: '24px',
+                  height: '24px',
                   borderRadius: '50%',
                   border: 'none',
-                  background: 'rgba(0,0,0,0.1)',
-                  color: '#666',
-                  fontSize: '11px',
+                  background: 'var(--md-sys-color-surface-container-highest)',
+                  color: 'var(--md-sys-color-on-surface-variant)',
+                  fontSize: '12px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   lineHeight: 1,
+                  transition: 'background 0.15s',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--md-sys-color-error-container)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--md-sys-color-surface-container-highest)')}
                 title="删除"
               >
                 ✕
               </button>
               <div
                 style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#555',
+                  font: 'var(--md-sys-typescale-label-medium)',
+                  color: 'var(--md-sys-color-on-surface)',
                   marginBottom: '6px',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
@@ -339,27 +340,12 @@ export default function UserSchemes({
                       height: '24px',
                       borderRadius: '50%',
                       backgroundColor: c,
-                      border: '2px solid rgba(0,0,0,0.1)',
+                      border: '2px solid var(--md-sys-color-outline-variant)',
                     }}
                   />
                 ))}
               </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '2px',
-                  fontSize: '8px',
-                  fontFamily: 'monospace',
-                  color: '#aaa',
-                  textAlign: 'center',
-                }}
-              >
-                <span>{hexToRgbString(scheme.topPrimary)}</span>
-                <span>{hexToRgbString(scheme.topSecondary)}</span>
-                <span>{hexToRgbString(scheme.basePattern)}</span>
-                <span>{hexToRgbString(scheme.baseBg)}</span>
-              </div>
+
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import SvgPreview from './components/SvgPreview'
 import ColorPickerPanel from './components/ColorPickerPanel'
 import SmartPalette from './components/SmartPalette'
@@ -12,6 +12,18 @@ import type { M3ColorResult } from './m3color'
 // 导入 SVG 原始文本
 import topsheetSvgRaw from './assets/Topsheet.svg?raw'
 import baseSvgRaw from './assets/Base.svg?raw'
+
+/** 自定义 hook：监听媒体查询 */
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches)
+  useEffect(() => {
+    const mql = window.matchMedia(query)
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [query])
+  return matches
+}
 
 function App() {
   // 4 色状态
@@ -61,43 +73,48 @@ function App() {
     setActiveSchemeId(null)
   }, [])
 
+  // 移动端检测
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: '#FDF6EC',
+        background: 'var(--md-sys-color-surface)',
         padding: '0 0 40px',
       }}
     >
       {/* 顶部标题栏 */}
+      {/* M3 Top App Bar */}
       <header
         style={{
-          background: 'linear-gradient(135deg, #7c6f5b, #a0926e)',
-          padding: '20px 40px',
-          color: '#fff',
+          background: 'var(--md-sys-color-surface)',
+          padding: isMobile ? '12px 16px' : '16px 24px',
+          color: 'var(--md-sys-color-on-surface)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+          boxShadow: 'var(--md-sys-elevation-level2)',
+          position: 'relative',
+          zIndex: 10,
         }}
       >
         <div>
           <h1
             style={{
               margin: 0,
-              fontSize: '24px',
-              fontWeight: 800,
-              letterSpacing: '2px',
+              font: 'var(--md-sys-typescale-title-large)',
+              letterSpacing: '1px',
+              color: 'var(--md-sys-color-primary)',
             }}
           >
             DONEK
           </h1>
           <p
             style={{
-              margin: '4px 0 0',
-              fontSize: '13px',
-              opacity: 0.8,
-              letterSpacing: '0.5px',
+              margin: '2px 0 0',
+              font: 'var(--md-sys-typescale-body-small)',
+              color: 'var(--md-sys-color-on-surface-variant)',
             }}
           >
             滑雪板配色定制 Snowboard Color Customizer
@@ -105,38 +122,56 @@ function App() {
         </div>
       </header>
 
-      {/* 主体区域 — 左右分栏 */}
+      {/* 主体区域 */}
       <div
         style={{
-          maxWidth: '1400px',
+          maxWidth: isMobile ? '100%' : '1400px',
           margin: '0 auto',
-          padding: '24px 32px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '32px',
+          padding: isMobile ? '0' : '24px 24px',
+          display: isMobile ? 'flex' : 'grid',
+          flexDirection: isMobile ? 'column' : undefined,
+          gridTemplateColumns: isMobile ? undefined : '2fr 3fr',
+          gap: isMobile ? '0' : '24px',
           alignItems: 'start',
         }}
       >
-        {/* ========== 左侧：SVG 预览区（sticky 固定，适配屏幕高度） ========== */}
+        {/* ========== 预览区 ========== */}
         <div
           style={{
-            position: 'sticky',
-            top: '24px',
-            height: 'calc(100vh - 120px)',
+          ...(isMobile
+              ? {
+                  position: 'sticky' as const,
+                  top: 0,
+                  zIndex: 50,
+                  background: 'var(--md-sys-color-surface)',
+                  boxShadow: 'var(--md-sys-elevation-level2)',
+                  padding: '8px 16px',
+                  width: '100vw',
+                  left: 0,
+                  boxSizing: 'border-box' as const,
+                  overflow: 'hidden' as const,
+                }
+              : {
+                  position: 'sticky' as const,
+                  top: '24px',
+                  height: 'calc(100vh - 120px)',
+                }),
           }}
         >
           <div
             style={{
               display: 'flex',
-              gap: '20px',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: '12px',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '24px',
-              background: 'rgba(255,255,255,0.5)',
-              borderRadius: '16px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-              height: '100%',
+              padding: isMobile ? '4px 0' : '16px',
+              background: isMobile ? 'transparent' : 'var(--md-sys-color-surface-container-low)',
+              borderRadius: isMobile ? '0' : 'var(--md-sys-shape-corner-large)',
+              boxShadow: isMobile ? 'none' : 'var(--md-sys-elevation-level1)',
+              height: isMobile ? 'auto' : '100%',
               boxSizing: 'border-box',
+              overflow: isMobile ? 'hidden' : undefined,
             }}
           >
             <SvgPreview
@@ -145,7 +180,9 @@ function App() {
               secondaryColor={topSecondary}
               primaryClass="color-primary"
               secondaryClass="color-secondary"
-              label="板面 Topsheet"
+              label={isMobile ? undefined : "板面 Topsheet"}
+              compact={isMobile}
+              rotation={isMobile ? -90 : 0}
             />
             <SvgPreview
               svgRaw={baseSvgRaw}
@@ -153,26 +190,29 @@ function App() {
               secondaryColor={baseBg}
               primaryClass="color-pattern"
               secondaryClass="color-bg"
-              label="板底 Base"
+              label={isMobile ? undefined : "板底 Base"}
+              compact={isMobile}
+              rotation={isMobile ? 90 : 0}
             />
           </div>
         </div>
 
-        {/* ========== 右侧：功能区（自然滚动） ========== */}
+        {/* ========== 功能区 ========== */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
+            gap: isMobile ? '12px' : '24px',
+            padding: isMobile ? '16px' : '0',
           }}
         >
           {/* 智能配色模块 */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.6)',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-low)',
+              borderRadius: 'var(--md-sys-shape-corner-large)',
               padding: '20px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
             <SmartPalette
@@ -187,10 +227,10 @@ function App() {
           {/* 手动颜色配置面板 */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.6)',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-low)',
+              borderRadius: 'var(--md-sys-shape-corner-large)',
               padding: '20px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
             <ColorPickerPanel
@@ -208,10 +248,10 @@ function App() {
           {/* 预设配色模板 */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.6)',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-low)',
+              borderRadius: 'var(--md-sys-shape-corner-large)',
               padding: '20px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
             <PresetTemplates
@@ -223,10 +263,10 @@ function App() {
           {/* 用户自定义配色 */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.6)',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-low)',
+              borderRadius: 'var(--md-sys-shape-corner-large)',
               padding: '20px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
             <UserSchemes
@@ -238,10 +278,10 @@ function App() {
           {/* 导出按钮 */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.6)',
-              borderRadius: '16px',
+              background: 'var(--md-sys-color-surface-container-low)',
+              borderRadius: 'var(--md-sys-shape-corner-large)',
               padding: '20px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
             <ExportCanvas

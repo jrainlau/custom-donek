@@ -2,13 +2,13 @@
 export interface ColorScheme {
   id: string
   name: string
-  /** 板面主体色 (HEX) */
+  /** 板面背景 (HEX) */
   topPrimary: string
-  /** 板面细节色 (HEX) */
+  /** 板面 logo (HEX) */
   topSecondary: string
-  /** 板底图案色 (HEX) */
+  /** 板底背景 (HEX) */
   baseBg: string
-  /** 板底背景色 (HEX) */
+  /** 板底 logo (HEX) */
   basePattern: string
 }
 

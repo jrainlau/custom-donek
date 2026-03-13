@@ -8,13 +8,13 @@ import {
  * M3 智能配色生成结果
  */
 export interface M3ColorResult {
-  /** 板面主体色 (HEX) */
+  /** 板面背景 (HEX) */
   topPrimary: string
-  /** 板面细节色 (HEX) */
+  /** 板面 logo (HEX) */
   topSecondary: string
-  /** 板底图案色 (HEX) */
+  /** 板底 logo (HEX) */
   basePattern: string
-  /** 板底背景色 (HEX) */
+  /** 板底背景 (HEX) */
   baseBg: string
 }
 
@@ -22,7 +22,7 @@ export interface M3ColorResult {
  * 从种子颜色生成 M3 配色方案
  *
  * 使用 Google Material Design 3 的色彩算法，从单个种子颜色自动生成
- * 4 个和谐的配套色，分别用于板面和板底的主体色与背景色。
+ * 4 个和谐的配套色，分别用于板面和板底的背景与 logo。
  *
  * @param seedHex - 种子颜色的 HEX 值，如 "#6750A4"
  * @returns M3ColorResult 包含 4 个 HEX 颜色值，失败时返回 null
@@ -38,13 +38,13 @@ export function generateM3Palette(seedHex: string): M3ColorResult | null {
     // 从亮色方案中提取 4 个代表性颜色
     const lightScheme = theme.schemes.light
 
-    // primary: 主色调，用于板面主体色
+    // primary: 主色调，用于板面背景
     const topPrimary = hexFromArgb(lightScheme.primary)
-    // onPrimary: 主色调上的前景色，用于板面细节色
+    // onPrimary: 主色调上的前景色，用于板面 logo
     const topSecondary = hexFromArgb(lightScheme.onPrimary)
-    // primaryContainer: 主色调容器色，用于板底背景色
+    // primaryContainer: 主色调容器色，用于板底背景
     const baseBg = hexFromArgb(lightScheme.primaryContainer)
-    // onPrimaryContainer: 容器上的前景色，用于板底图案色
+    // onPrimaryContainer: 容器上的前景色，用于板底 logo
     const basePattern = hexFromArgb(lightScheme.onPrimaryContainer)
 
     return {

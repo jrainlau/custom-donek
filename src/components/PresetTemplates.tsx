@@ -42,38 +42,16 @@ export default function PresetTemplates({
                 padding: '12px',
                 borderRadius: 'var(--md-sys-shape-corner-medium)',
                 background: isActive ? 'var(--md-sys-color-surface-container)' : 'var(--md-sys-color-surface-container-low)',
-                border: isActive ? '2px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)',
+                border: isActive ? '1px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)',
                 cursor: 'pointer',
                 transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
-                boxShadow: isActive
-                  ? 'var(--md-sys-elevation-level2)'
-                  : 'var(--md-sys-elevation-level1)',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive)
-                  e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive)
-                  e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
               }}
             >
-              <div
-                style={{
-                  font: 'var(--md-sys-typescale-label-medium)',
-                  color: 'var(--md-sys-color-on-surface)',
-                  marginBottom: '8px',
-                  textAlign: 'center',
-                }}
-              >
-                {scheme.name}
-              </div>
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
                   gap: '6px',
-                  marginBottom: '6px',
                 }}
               >
                 {[
@@ -89,8 +67,6 @@ export default function PresetTemplates({
                       height: '28px',
                       borderRadius: '50%',
                       backgroundColor: color,
-                      border: '2px solid var(--md-sys-color-outline-variant)',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                     }}
                   />
                 ))}

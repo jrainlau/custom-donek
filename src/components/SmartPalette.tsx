@@ -236,7 +236,7 @@ export default function SmartPalette({
               borderRadius: '12px',
               backgroundColor: seedColor,
               cursor: 'pointer',
-              border: `2px solid var(${showPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
+              border: `1px solid var(${showPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
               boxShadow: showPicker
                 ? '0 0 0 3px var(--md-sys-color-primary-container)'
                 : 'var(--md-sys-elevation-level1)',
@@ -338,8 +338,8 @@ export default function SmartPalette({
                 border: isDragOver
                   ? '2px dashed var(--md-sys-color-primary)'
                   : isSelected
-                    ? '2px solid var(--md-sys-color-primary)'
-                    : '2px solid var(--md-sys-color-outline-variant)',
+                    ? '1px solid var(--md-sys-color-primary)'
+                    : '1px solid var(--md-sys-color-outline-variant)',
                 boxShadow: isDragging
                   ? 'var(--md-sys-elevation-level4)'
                   : isDragOver

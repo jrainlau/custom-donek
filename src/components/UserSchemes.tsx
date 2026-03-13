@@ -17,8 +17,6 @@ export default function UserSchemes({
   onSelect,
 }: UserSchemesProps) {
   const [schemes, setSchemes] = useState<SavedColorScheme[]>([])
-  const [showSaveDialog, setShowSaveDialog] = useState(false)
-  const [schemeName, setSchemeName] = useState('')
   const [isFallback] = useState(isUsingFallback)
 
   // 加载已保存的配色
@@ -33,13 +31,11 @@ export default function UserSchemes({
     loadSchemes()
   }, [loadSchemes])
 
-  // 保存当前配色
+  // 保存当前配色（自动生成随机 ID，无需命名）
   const handleSave = useCallback(async () => {
-    if (!schemeName.trim()) return
-
     const newScheme: SavedColorScheme = {
-      id: 'user-' + Date.now().toString(36),
-      name: schemeName.trim(),
+      id: 'user-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6),
+      name: '',
       topPrimary: currentColors.topPrimary,
       topSecondary: currentColors.topSecondary,
       basePattern: currentColors.basePattern,
@@ -49,9 +45,7 @@ export default function UserSchemes({
 
     await saveScheme(newScheme)
     await loadSchemes()
-    setSchemeName('')
-    setShowSaveDialog(false)
-  }, [schemeName, currentColors, loadSchemes])
+  }, [currentColors, loadSchemes])
 
   // 删除配色
   const handleDelete = useCallback(
@@ -87,7 +81,7 @@ export default function UserSchemes({
           💾 我的配色
         </h3>
         <button
-          onClick={() => setShowSaveDialog(true)}
+          onClick={handleSave}
           style={{
             padding: '8px 20px',
             borderRadius: '20px',
@@ -118,123 +112,6 @@ export default function UserSchemes({
           }}
         >
           ⚠️ IndexedDB 不可用，已降级为 localStorage 存储，容量有限
-        </div>
-      )}
-
-      {/* 保存弹窗 */}
-      {showSaveDialog && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-          onClick={() => setShowSaveDialog(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: 'var(--md-sys-color-surface-container-high)',
-              borderRadius: 'var(--md-sys-shape-corner-extra-large)',
-              padding: '24px',
-              width: '360px',
-              boxShadow: 'var(--md-sys-elevation-level3)',
-            }}
-          >
-            <h4 style={{ margin: '0 0 16px', font: 'var(--md-sys-typescale-title-medium)', color: 'var(--md-sys-color-on-surface)' }}>
-              保存配色方案
-            </h4>
-            {/* 预览色块 */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                justifyContent: 'center',
-                marginBottom: '16px',
-              }}
-            >
-              {[
-                currentColors.topPrimary,
-                currentColors.topSecondary,
-                currentColors.basePattern,
-                currentColors.baseBg,
-              ].map((c, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    backgroundColor: c,
-                    border: '2px solid var(--md-sys-color-outline-variant)',
-                  }}
-                />
-              ))}
-            </div>
-            <input
-              autoFocus
-              type="text"
-              value={schemeName}
-              onChange={(e) => setSchemeName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-              placeholder="为你的配色方案取个名字..."
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                border: '1px solid var(--md-sys-color-outline)',
-                borderRadius: 'var(--md-sys-shape-corner-small)',
-                fontSize: '14px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                marginTop: '16px',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <button
-                onClick={() => setShowSaveDialog(false)}
-                style={{
-                  padding: '10px 24px',
-                  borderRadius: '20px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'var(--md-sys-color-primary)',
-                  font: 'var(--md-sys-typescale-label-large)',
-                  cursor: 'pointer',
-                }}
-              >
-                取消
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!schemeName.trim()}
-                style={{
-                  padding: '10px 24px',
-                  borderRadius: '20px',
-                  border: 'none',
-                  background: schemeName.trim() ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-surface-container-highest)',
-                  color: schemeName.trim() ? 'var(--md-sys-color-on-primary)' : 'var(--md-sys-color-on-surface-variant)',
-                  font: 'var(--md-sys-typescale-label-large)',
-                  cursor: schemeName.trim() ? 'pointer' : 'not-allowed',
-                  boxShadow: schemeName.trim() ? 'var(--md-sys-elevation-level1)' : 'none',
-                }}
-              >
-                保存
-              </button>
-            </div>
-          </div>
         </div>
       )}
 
@@ -269,14 +146,7 @@ export default function UserSchemes({
                 border: '1px solid var(--md-sys-color-outline-variant)',
                 cursor: 'pointer',
                 transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
-                boxShadow: 'var(--md-sys-elevation-level1)',
                 position: 'relative',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)'
               }}
             >
               {/* 删除按钮 */}
@@ -284,8 +154,8 @@ export default function UserSchemes({
                 onClick={(e) => handleDelete(scheme.id, e)}
                 style={{
                   position: 'absolute',
-                  top: '6px',
-                  right: '6px',
+                  top: '4px',
+                  right: '4px',
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
@@ -308,23 +178,9 @@ export default function UserSchemes({
               </button>
               <div
                 style={{
-                  font: 'var(--md-sys-typescale-label-medium)',
-                  color: 'var(--md-sys-color-on-surface)',
-                  marginBottom: '6px',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {scheme.name}
-              </div>
-              <div
-                style={{
                   display: 'flex',
                   justifyContent: 'center',
                   gap: '4px',
-                  marginBottom: '4px',
                 }}
               >
                 {[
@@ -340,12 +196,10 @@ export default function UserSchemes({
                       height: '24px',
                       borderRadius: '50%',
                       backgroundColor: c,
-                      border: '2px solid var(--md-sys-color-outline-variant)',
                     }}
                   />
                 ))}
               </div>
-
             </div>
           ))}
         </div>

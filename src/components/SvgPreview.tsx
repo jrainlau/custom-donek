@@ -211,7 +211,7 @@ export default function SvgPreview({
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 'var(--md-sys-shape-corner-medium)',
-            boxShadow: compact ? 'none' : 'var(--md-sys-elevation-level1)',
+            boxShadow: 'none',
             background: compact ? 'transparent' : 'var(--md-sys-color-surface-container-lowest)',
             padding: compact ? '0' : '8px',
             transition: 'box-shadow 0.2s ease',

@@ -225,10 +225,10 @@ export default function ColorPickerPanel({
               borderRadius: '8px',
               backgroundColor: seedColor,
               cursor: 'pointer',
-              border: `2px solid var(${showSeedPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
+              border: `1px solid var(${showSeedPicker ? '--md-sys-color-primary' : '--md-sys-color-outline'})`,
               boxShadow: showSeedPicker
                 ? '0 0 0 2px var(--md-sys-color-primary-container)'
-                : 'var(--md-sys-elevation-level1)',
+                : 'none',
               transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               flexShrink: 0,
             }}
@@ -336,13 +336,11 @@ export default function ColorPickerPanel({
                 padding: '12px 10px',
                 cursor: 'grab',
                 border: isDragOver
-                  ? '2px dashed var(--md-sys-color-primary)'
-                  : '2px solid var(--md-sys-color-outline-variant)',
+                  ? '1px dashed var(--md-sys-color-primary)'
+                  : '1px solid var(--md-sys-color-outline-variant)',
                 boxShadow: isDragging
                   ? 'var(--md-sys-elevation-level4)'
-                  : isDragOver
-                    ? 'var(--md-sys-elevation-level2)'
-                    : 'var(--md-sys-elevation-level1)',
+                  : 'none',
                 transform: isDragging ? 'scale(1.05) rotate(2deg)' : 'scale(1)',
                 opacity: isDragging ? 0.8 : 1,
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease, opacity 0.2s ease',
@@ -432,7 +430,6 @@ export default function ColorPickerPanel({
                     background: 'var(--md-sys-color-surface)',
                     borderRadius: '8px',
                     padding: '10px',
-                    boxShadow: 'var(--md-sys-elevation-level2)',
                     cursor: 'default',
                   }}
                 >

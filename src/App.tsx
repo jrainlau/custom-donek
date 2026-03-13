@@ -248,13 +248,14 @@ function App() {
             position: 'fixed' as const,
             zIndex: 50,
             boxSizing: 'border-box' as const,
+            boxShadow: 'var(--md-sys-elevation-level1)',
+            borderRadius: isMobile ? '0' : 'var(--md-sys-shape-corner-large)',
             ...(isMobile
               ? {
                   top: headerHeight,
                   left: 0,
                   right: 0,
                   background: 'var(--md-sys-color-surface)',
-                  boxShadow: 'var(--md-sys-elevation-level2)',
                   padding: '8px 16px',
                   overflow: 'hidden' as const,
                 }
@@ -276,7 +277,7 @@ function App() {
               padding: isMobile ? '4px 0' : '16px',
               background: isMobile ? 'transparent' : 'var(--md-sys-color-surface-container-low)',
               borderRadius: isMobile ? '0' : 'var(--md-sys-shape-corner-large)',
-              boxShadow: isMobile ? 'none' : 'var(--md-sys-elevation-level1)',
+              boxShadow: 'none',
               height: isMobile ? 'auto' : '100%',
               boxSizing: 'border-box',
               overflow: isMobile ? 'hidden' : undefined,

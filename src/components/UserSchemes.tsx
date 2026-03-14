@@ -9,11 +9,13 @@ interface UserSchemesProps {
     basePattern: string
     baseBg: string
   }
+  activeSchemeId: string | null
   onSelect: (scheme: ColorScheme) => void
 }
 
 export default function UserSchemes({
   currentColors,
+  activeSchemeId,
   onSelect,
 }: UserSchemesProps) {
   const [schemes, setSchemes] = useState<SavedColorScheme[]>([])
@@ -135,15 +137,20 @@ export default function UserSchemes({
             gap: '10px',
           }}
         >
-          {schemes.map((scheme) => (
+          {schemes.map((scheme) => {
+            const isActive = activeSchemeId === scheme.id
+            return (
             <div
               key={scheme.id}
               onClick={() => onSelect(scheme)}
               style={{
                 padding: '12px',
                 borderRadius: 'var(--md-sys-shape-corner-medium)',
-                background: 'var(--md-sys-color-surface-container-low)',
-                border: '1px solid var(--md-sys-color-outline-variant)',
+                background: isActive ? 'var(--md-sys-color-surface-container)' : 'var(--md-sys-color-surface-container-low)',
+                border: 'none',
+                outline: isActive ? '2px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)',
+                outlineOffset: isActive ? '2px' : '0px',
+                boxShadow: isActive ? '0 0 12px 2px rgba(103, 80, 164, 0.45)' : 'none',
                 cursor: 'pointer',
                 transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
                 position: 'relative',
@@ -201,7 +208,8 @@ export default function UserSchemes({
                 ))}
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

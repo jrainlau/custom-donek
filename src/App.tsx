@@ -377,6 +377,7 @@ function App() {
           >
             <UserSchemes
               currentColors={{ topPrimary, topSecondary, basePattern, baseBg }}
+              activeSchemeId={activeSchemeId}
               onSelect={applyScheme}
             />
           </div>

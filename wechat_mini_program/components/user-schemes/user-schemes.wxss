@@ -45,9 +45,18 @@
   padding: 24rpx;
   border-radius: var(--md-sys-shape-corner-medium);
   background: var(--md-sys-color-surface-container-low);
-  border: 2rpx solid var(--md-sys-color-outline-variant);
+  border: none;
+  outline: 2rpx solid var(--md-sys-color-outline-variant);
+  outline-offset: 0;
   position: relative;
   transition: all 0.2s;
+}
+
+.scheme-item.active {
+  background: var(--md-sys-color-surface-container);
+  outline: 4rpx solid var(--md-sys-color-primary);
+  outline-offset: 4rpx;
+  box-shadow: 0 0 24rpx 4rpx rgba(103, 80, 164, 0.45);
 }
 
 .delete-btn {

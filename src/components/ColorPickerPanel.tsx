@@ -478,14 +478,14 @@ export default function ColorPickerPanel({
                   onClick={(e) => openEditor(e, index)}
                   title="修改颜色"
                   style={{
-                    fontSize: '11px',
+                    fontSize: '14px',
                     cursor: 'pointer',
                     color: textColor,
-                    padding: '2px 8px',
+                    padding: '2px 6px',
                     borderRadius: '4px',
                     backgroundColor: 'rgba(0,0,0,0.12)',
-                    fontWeight: 600,
                     transition: 'background-color 0.15s ease',
+                    lineHeight: 1,
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.2)'
@@ -494,7 +494,7 @@ export default function ColorPickerPanel({
                     e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.12)'
                   }}
                 >
-                  修改
+                  ✏️
                 </div>
               </div>
             </div>

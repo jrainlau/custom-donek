@@ -62,15 +62,15 @@
           data-index="{{item.index}}"
           catchtap="onOpenEditor"
         >
-          <text style="color: {{item.textColor}};">修改</text>
+          <text style="color: {{item.textColor}};">✏️</text>
         </view>
       </view>
     </view>
   </view>
 
   <!-- ===== 颜色编辑弹窗 ===== -->
-  <view class="modal-overlay" wx:if="{{editingIndex >= 0}}" catchtap="onCloseEditor">
-    <view class="modal-card" catchtap="">
+  <view class="modal-overlay" wx:if="{{editingIndex >= 0}}" catchtap="onOverlayTap">
+    <view class="modal-card" catchtap="onModalCardTap">
       <!-- 弹窗头部 -->
       <view class="modal-header">
         <text class="modal-title">🎨 {{editingItem.label}}</text>
@@ -100,6 +100,7 @@
             block-size="16"
             data-channel="r"
             bindchange="onEditorSliderChange"
+            bindchanging="onEditorSliderChanging"
           />
           <text class="channel-value">{{editingItem.r}}</text>
         </view>
@@ -113,6 +114,7 @@
             block-size="16"
             data-channel="g"
             bindchange="onEditorSliderChange"
+            bindchanging="onEditorSliderChanging"
           />
           <text class="channel-value">{{editingItem.g}}</text>
         </view>
@@ -126,23 +128,17 @@
             block-size="16"
             data-channel="b"
             bindchange="onEditorSliderChange"
+            bindchanging="onEditorSliderChanging"
           />
           <text class="channel-value">{{editingItem.b}}</text>
         </view>
       </view>
 
-      <!-- RGB 文本输入框 -->
-      <view class="rgb-input-section">
-        <text class="rgb-input-label">RGB 输入</text>
-        <input
-          class="rgb-input {{rgbInputError ? 'error' : ''}}"
-          type="text"
-          value="{{rgbInputValue}}"
-          placeholder="R,G,B（如 178,34,34）"
-          bindinput="onRgbInput"
-        />
-        <text class="rgb-input-error" wx:if="{{rgbInputError}}">请输入合法的 RGB 值（0-255），以英文逗号分隔</text>
+      <!-- 剪贴板 RGB 快捷应用 -->
+      <view class="clipboard-rgb-btn" wx:if="{{clipboardRgb}}" catchtap="onApplyClipboardRgb" style="background-color: {{clipboardRgbHex}};">
+        <text class="clipboard-rgb-btn-text" style="color: {{clipboardRgbTextColor}};">📋 使用 {{clipboardRgb}} 颜色</text>
       </view>
+
     </view>
   </view>
 </view>

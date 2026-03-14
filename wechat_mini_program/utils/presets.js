@@ -3,7 +3,7 @@ var PRESET_SCHEMES = [
   {
     id: 'preset-9',
     name: '樱花粉雪',
-    topPrimary: '#FFB7C5',
+    topPrimary: '#FF69B4',
     topSecondary: '#FFFFFF',
     basePattern: '#2E2E2E',
     baseBg: '#FF69B4',

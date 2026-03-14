@@ -7,6 +7,7 @@ Component({
     topSecondary: { type: String, value: '' },
     basePattern: { type: String, value: '' },
     baseBg: { type: String, value: '' },
+    activeSchemeId: { type: String, value: '' },
   },
 
   data: {

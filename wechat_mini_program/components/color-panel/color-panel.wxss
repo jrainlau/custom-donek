@@ -138,19 +138,21 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 15vh;
 }
 
 /* 弹窗卡片 */
 .modal-card {
   width: 620rpx;
-  max-height: 90vh;
+  max-height: 70vh;
   background: var(--md-sys-color-surface);
   border-radius: 56rpx;
   padding: 48rpx;
   box-shadow: var(--md-sys-elevation-level3);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -184,40 +186,7 @@
   border: 2rpx solid var(--md-sys-color-outline-variant);
 }
 
-/* RGB 输入框区域 */
-.rgb-input-section {
-  margin-top: 24rpx;
-}
 
-.rgb-input-label {
-  display: block;
-  font-size: 22rpx;
-  color: var(--md-sys-color-on-surface-variant);
-  margin-bottom: 8rpx;
-}
-
-.rgb-input {
-  width: 100%;
-  padding: 20rpx 24rpx;
-  border-radius: var(--md-sys-shape-corner-small);
-  border: 2rpx solid var(--md-sys-color-outline);
-  background: var(--md-sys-color-surface-container);
-  color: var(--md-sys-color-on-surface);
-  font-size: 28rpx;
-  font-family: monospace;
-  box-sizing: border-box;
-}
-
-.rgb-input.error {
-  border-color: var(--md-sys-color-error);
-}
-
-.rgb-input-error {
-  display: block;
-  font-size: 22rpx;
-  color: var(--md-sys-color-error);
-  margin-top: 8rpx;
-}
 
 .rgb-sliders {
   margin-top: 16rpx;
@@ -247,4 +216,28 @@
   width: 56rpx;
   text-align: right;
   color: var(--md-sys-color-on-surface);
+}
+
+/* 剪贴板 RGB 快捷应用按钮 */
+.clipboard-rgb-btn {
+  margin-top: 24rpx;
+  padding: 20rpx 32rpx;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--md-sys-elevation-level1);
+  border: 2rpx solid var(--md-sys-color-outline-variant);
+  transition: all 0.2s;
+}
+
+.clipboard-rgb-btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+.clipboard-rgb-btn-text {
+  font-size: 26rpx;
+  font-weight: 500;
+  font-family: monospace;
 }

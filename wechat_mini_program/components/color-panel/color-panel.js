@@ -21,8 +21,10 @@ Component({
     editingIndex: -1,
     editingItem: null,
     copiedIndex: -1,
-    rgbInputValue: '',
-    rgbInputError: false,
+    clipboardRgb: '',  // 剪贴板中检测到的合法 RGB 值
+    clipboardRgbHex: '',  // 剪贴板 RGB 对应的 HEX 色值
+    clipboardRgbTextColor: '',  // 剪贴板 RGB 按钮文字颜色（亮/暗自适应）
+
     // 颜色列表（方便模板遍历）
     colorItems: [],
   },
@@ -94,8 +96,12 @@ Component({
       ]
       var color = colors[index]
       var rgb = util.hexToRgb(color)
+      var self = this
       this.setData({
         editingIndex: index,
+        clipboardRgb: '',
+        clipboardRgbHex: '',
+        clipboardRgbTextColor: '',
         editingItem: {
           label: LABELS[index],
           color: color,
@@ -104,18 +110,91 @@ Component({
           b: rgb.b,
           key: COLOR_KEYS[index],
         },
-        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
-        rgbInputError: false,
+      })
+      // 读取剪贴板，检测是否包含合法 RGB 值
+      wx.getClipboardData({
+        success: function (res) {
+          var text = (res.data || '').trim()
+          var valid = self._parseClipboardRgb(text)
+          if (valid) {
+            var parts = valid.split(',')
+            var cr = parseInt(parts[0], 10)
+            var cg = parseInt(parts[1], 10)
+            var cb = parseInt(parts[2], 10)
+            var hex = util.rgbToHex(cr, cg, cb)
+            var textColor = util.getContrastColor(hex)
+            self.setData({
+              clipboardRgb: valid,
+              clipboardRgbHex: hex,
+              clipboardRgbTextColor: textColor,
+            })
+          }
+        },
       })
     },
 
-    // 关闭弹窗编辑器
+    // 解析剪贴板文本，返回合法的 RGB 字符串或空字符串
+    _parseClipboardRgb: function (text) {
+      if (!text) return ''
+      // 仅匹配纯英文逗号分隔的三个数字
+      var parts = text.split(',')
+      if (parts.length !== 3) return ''
+      var nums = parts.map(function (p) { return parseInt(p.trim(), 10) })
+      var valid = nums.every(function (n) { return !isNaN(n) && n >= 0 && n <= 255 })
+      if (!valid) return ''
+      return nums[0] + ',' + nums[1] + ',' + nums[2]
+    },
+
+    // 应用剪贴板 RGB 颜色
+    onApplyClipboardRgb: function () {
+      var rgbStr = this.data.clipboardRgb
+      if (!rgbStr) return
+      var index = this.data.editingIndex
+      if (index < 0) return
+      var parts = rgbStr.split(',')
+      var r = parseInt(parts[0], 10)
+      var g = parseInt(parts[1], 10)
+      var b = parseInt(parts[2], 10)
+      var newHex = util.rgbToHex(r, g, b)
+      this.setData({
+        'editingItem.color': newHex,
+        'editingItem.r': r,
+        'editingItem.g': g,
+        'editingItem.b': b,
+        clipboardRgb: '',  // 使用后隐藏按钮
+        clipboardRgbHex: '',
+        clipboardRgbTextColor: '',
+      })
+      this.triggerEvent('colorchange', {
+        key: COLOR_KEYS[index],
+        color: newHex,
+      })
+    },
+
+    // 弹窗遮罩层点击
+    onOverlayTap: function () {
+      this.setData({
+        editingIndex: -1,
+        editingItem: null,
+        clipboardRgb: '',
+        clipboardRgbHex: '',
+        clipboardRgbTextColor: '',
+      })
+    },
+
+    // 弹窗卡片点击（阻止冒泡到遮罩层）
+    onModalCardTap: function () {
+      // 仅阻止冒泡，不做其他处理
+    },
+
+    // 关闭弹窗编辑器（显式关闭按钮）
     onCloseEditor: function () {
       this.setData({
         editingIndex: -1,
         editingItem: null,
-        rgbInputValue: '',
-        rgbInputError: false,
+        clipboardRgb: '',
+        clipboardRgbHex: '',
+        clipboardRgbTextColor: '',
       })
     },
 
@@ -130,8 +209,6 @@ Component({
         'editingItem.r': rgb.r,
         'editingItem.g': rgb.g,
         'editingItem.b': rgb.b,
-        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
-        rgbInputError: false,
       })
       this.triggerEvent('colorchange', {
         key: COLOR_KEYS[index],
@@ -139,7 +216,30 @@ Component({
       })
     },
 
-    // 弹窗内 RGB 滑块变化
+    // 弹窗内 RGB 滑块拖动中实时更新（bindchanging）
+    onEditorSliderChanging: function (e) {
+      var channel = e.currentTarget.dataset.channel
+      var value = e.detail.value
+      var index = this.data.editingIndex
+      if (index < 0) return
+      var item = this.data.editingItem
+      var rgb = { r: item.r, g: item.g, b: item.b }
+      rgb[channel] = value
+      var newHex = util.rgbToHex(rgb.r, rgb.g, rgb.b)
+      this.setData({
+        'editingItem.color': newHex,
+        'editingItem.r': rgb.r,
+        'editingItem.g': rgb.g,
+        'editingItem.b': rgb.b,
+      })
+      // 实时通知父组件颜色变化
+      this.triggerEvent('colorchange', {
+        key: COLOR_KEYS[index],
+        color: newHex,
+      })
+    },
+
+    // 弹窗内 RGB 滑块变化（bindchange，松手时触发）
     onEditorSliderChange: function (e) {
       var channel = e.currentTarget.dataset.channel
       var value = e.detail.value
@@ -154,39 +254,6 @@ Component({
         'editingItem.r': rgb.r,
         'editingItem.g': rgb.g,
         'editingItem.b': rgb.b,
-        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
-        rgbInputError: false,
-      })
-      this.triggerEvent('colorchange', {
-        key: COLOR_KEYS[index],
-        color: newHex,
-      })
-    },
-
-    // RGB 文本输入
-    onRgbInput: function (e) {
-      var value = e.detail.value
-      this.setData({ rgbInputValue: value })
-      var index = this.data.editingIndex
-      if (index < 0) return
-      var parts = value.split(',')
-      if (parts.length !== 3) {
-        this.setData({ rgbInputError: value.trim().length > 0 })
-        return
-      }
-      var nums = parts.map(function (p) { return parseInt(p.trim(), 10) })
-      var valid = nums.every(function (n) { return !isNaN(n) && n >= 0 && n <= 255 })
-      if (!valid) {
-        this.setData({ rgbInputError: true })
-        return
-      }
-      var newHex = util.rgbToHex(nums[0], nums[1], nums[2])
-      this.setData({
-        rgbInputError: false,
-        'editingItem.color': newHex,
-        'editingItem.r': nums[0],
-        'editingItem.g': nums[1],
-        'editingItem.b': nums[2],
       })
       this.triggerEvent('colorchange', {
         key: COLOR_KEYS[index],

@@ -67,17 +67,41 @@
 }
 
 /* ========== SVG 预览区 ========== */
+.snapshot-area {
+  background: var(--md-sys-color-surface);
+}
+
 .preview-section {
   background: var(--md-sys-color-surface);
-  padding: 8rpx 24rpx;
+  padding: 24rpx 24rpx;
   box-shadow: var(--md-sys-elevation-level1);
   overflow: hidden;
+}
+
+.snapshot-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0 8rpx;
+}
+
+.snapshot-title-main {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  letter-spacing: 2rpx;
+}
+
+.snapshot-title-sub {
+  font-size: 20rpx;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 4rpx;
 }
 
 .preview-column {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 16rpx;
   justify-content: center;
   align-items: center;
 }
@@ -97,11 +121,42 @@
   box-shadow: var(--md-sys-elevation-level1);
 }
 
-/* ========== 离屏导出 Canvas ========== */
-.export-canvas {
-  position: fixed;
-  left: -9999rpx;
-  top: 0;
-  width: 750px;
-  height: 1000px;
+/* ========== 截图配色信息 ========== */
+.snapshot-colors {
+  display: flex;
+  justify-content: space-around;
+  padding: 16rpx 0 8rpx;
+  gap: 8rpx;
+}
+
+.snapshot-color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.snapshot-color-dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.snapshot-color-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.snapshot-color-label {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.snapshot-color-rgb {
+  font-size: 18rpx;
+  font-family: monospace;
+  color: var(--md-sys-color-on-surface-variant);
 }

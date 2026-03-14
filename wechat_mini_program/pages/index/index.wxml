@@ -7,14 +7,6 @@
           <text class="navbar-title">DONEK</text>
           <text class="navbar-subtitle">滑雪板配色定制</text>
         </view>
-        <!-- 导出按钮（紧跟标题右侧） -->
-        <view
-          class="export-btn {{exporting ? 'disabled' : ''}}"
-          bindtap="onExport"
-        >
-          <text wx:if="{{exporting}}">⏳</text>
-          <text wx:else>📸</text>
-        </view>
       </view>
     </view>
   </view>
@@ -24,6 +16,9 @@
 
   <!-- ========== SVG 预览区 ========== -->
   <view class="preview-section">
+      <view class="snapshot-title">
+        <text class="snapshot-title-main">  </text>
+      </view>
     <view class="preview-column">
       <svg-preview
         svgRaw="{{topsheetSvg}}"
@@ -42,6 +37,16 @@
         rotation="{{90}}"
       />
     </view>
+      <!-- 截图中展示的配色信息 -->
+      <view class="snapshot-colors">
+        <view class="snapshot-color-item" wx:for="{{snapshotColors}}" wx:key="index">
+          <view class="snapshot-color-dot" style="background-color: {{item.hex}};"></view>
+          <view class="snapshot-color-info">
+            <text class="snapshot-color-label">{{item.label}}</text>
+            <text class="snapshot-color-rgb">{{item.rgb}}</text>
+          </view>
+        </view>
+      </view>
   </view>
 
   <!-- ========== 功能区 ========== -->
@@ -79,15 +84,11 @@
         topSecondary="{{topSecondary}}"
         basePattern="{{basePattern}}"
         baseBg="{{baseBg}}"
+        activeSchemeId="{{activeSchemeId}}"
         bindselect="onUserSchemeSelect"
       />
     </view>
   </view>
 
-  <!-- ========== 离屏导出 Canvas ========== -->
-  <canvas
-    id="export-canvas"
-    type="2d"
-    class="export-canvas"
-  />
+
 </view>

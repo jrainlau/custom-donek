@@ -42,7 +42,10 @@ export default function PresetTemplates({
                 padding: '12px',
                 borderRadius: 'var(--md-sys-shape-corner-medium)',
                 background: isActive ? 'var(--md-sys-color-surface-container)' : 'var(--md-sys-color-surface-container-low)',
-                border: isActive ? '1px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)',
+                border: 'none',
+                outline: isActive ? '2px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)',
+                outlineOffset: isActive ? '2px' : '0px',
+                boxShadow: isActive ? '0 0 12px 2px rgba(103, 80, 164, 0.45)' : 'none',
                 cursor: 'pointer',
                 transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
               }}

@@ -14,7 +14,7 @@
     <view
       wx:for="{{schemes}}"
       wx:key="id"
-      class="scheme-item"
+      class="scheme-item {{activeSchemeId === item.id ? 'active' : ''}}"
       data-index="{{index}}"
       bindtap="onSelectScheme"
     >

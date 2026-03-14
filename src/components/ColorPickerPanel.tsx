@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { hexToRgb, rgbToHex, hexToRgbString, copyToClipboard } from '../utils'
 
@@ -55,8 +55,11 @@ export default function ColorPickerPanel({
   // 拖拽状态
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-  // 展开详细颜色编辑器的索引
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  // 弹窗编辑器的索引
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  // RGB 文本输入
+  const [rgbInputValue, setRgbInputValue] = useState('')
+  const [rgbInputError, setRgbInputError] = useState(false)
   // 复制反馈
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
@@ -181,13 +184,80 @@ export default function ColorPickerPanel({
     [colors]
   )
 
-  // --- 展开/折叠详细编辑器 ---
-  const toggleExpand = useCallback(
+  // --- 弹窗编辑器 ---
+  const openEditor = useCallback(
     (e: React.MouseEvent, index: number) => {
       e.stopPropagation()
-      setExpandedIndex(expandedIndex === index ? null : index)
+      setEditingIndex(index)
+      const rgb = hexToRgb(colors[index])
+      setRgbInputValue(`${rgb.r},${rgb.g},${rgb.b}`)
+      setRgbInputError(false)
     },
-    [expandedIndex]
+    [colors]
+  )
+
+  const closeEditor = useCallback(() => {
+    setEditingIndex(null)
+    setRgbInputValue('')
+    setRgbInputError(false)
+  }, [])
+
+  // ESC 关闭弹窗
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && editingIndex !== null) {
+        closeEditor()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [editingIndex, closeEditor])
+
+  // 弹窗内颜色变化时同步 RGB 输入框
+  const handleEditorColorChange = useCallback(
+    (hex: string) => {
+      if (editingIndex === null) return
+      setters[editingIndex](hex)
+      const rgb = hexToRgb(hex)
+      setRgbInputValue(`${rgb.r},${rgb.g},${rgb.b}`)
+      setRgbInputError(false)
+    },
+    [editingIndex, setters]
+  )
+
+  // RGB 滑块变化
+  const handleEditorSliderChange = useCallback(
+    (ch: 'r' | 'g' | 'b', val: number) => {
+      if (editingIndex === null) return
+      const rgb = hexToRgb(colors[editingIndex])
+      const newRgb = { ...rgb, [ch]: val }
+      const hex = rgbToHex(newRgb.r, newRgb.g, newRgb.b)
+      setters[editingIndex](hex)
+      setRgbInputValue(`${newRgb.r},${newRgb.g},${newRgb.b}`)
+      setRgbInputError(false)
+    },
+    [editingIndex, colors, setters]
+  )
+
+  // RGB 文本输入处理
+  const handleRgbInput = useCallback(
+    (value: string) => {
+      setRgbInputValue(value)
+      if (editingIndex === null) return
+      const parts = value.split(',')
+      if (parts.length !== 3) {
+        setRgbInputError(value.trim().length > 0)
+        return
+      }
+      const nums = parts.map((p) => parseInt(p.trim(), 10))
+      if (nums.some((n) => isNaN(n) || n < 0 || n > 255)) {
+        setRgbInputError(true)
+        return
+      }
+      setRgbInputError(false)
+      setters[editingIndex](rgbToHex(nums[0], nums[1], nums[2]))
+    },
+    [editingIndex, setters]
   )
 
   return (
@@ -314,7 +384,6 @@ export default function ColorPickerPanel({
           const color = colors[index]
           const isDragging = dragIndex === index
           const isDragOver = dragOverIndex === index && dragIndex !== index
-          const isExpanded = expandedIndex === index
           const textColor = getContrastColor(color)
           const rgb = hexToRgb(color)
 
@@ -379,7 +448,7 @@ export default function ColorPickerPanel({
                 ⠿
               </div>
 
-              {/* 底部：RGB 值 + 展开按钮 */}
+              {/* 底部：RGB 值 + 修改按钮 */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div
                   onClick={(e) => handleCopyColor(e, index)}
@@ -404,90 +473,220 @@ export default function ColorPickerPanel({
                 >
                   {copiedIndex === index ? '✅ 已复制' : hexToRgbString(color)}
                 </div>
-                {/* 展开编辑按钮 */}
+                {/* 修改按钮 */}
                 <div
-                  onClick={(e) => toggleExpand(e, index)}
-                  title="展开颜色编辑器"
+                  onClick={(e) => openEditor(e, index)}
+                  title="修改颜色"
                   style={{
-                    fontSize: '14px',
+                    fontSize: '11px',
                     cursor: 'pointer',
                     color: textColor,
-                    opacity: 0.7,
-                    padding: '0 4px',
-                    lineHeight: 1,
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    backgroundColor: 'rgba(0,0,0,0.12)',
+                    fontWeight: 600,
+                    transition: 'background-color 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.12)'
                   }}
                 >
-                  {isExpanded ? '▲' : '▼'}
+                  修改
                 </div>
               </div>
-
-              {/* 展开的颜色编辑器 */}
-              {isExpanded && (
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    marginTop: '8px',
-                    background: 'var(--md-sys-color-surface)',
-                    borderRadius: '8px',
-                    padding: '10px',
-                    cursor: 'default',
-                  }}
-                >
-                  <HexColorPicker
-                    color={color}
-                    onChange={setters[index]}
-                    style={{ width: '100%', height: '140px' }}
-                  />
-                  {/* RGB 滑块 */}
-                  <div style={{ marginTop: '8px' }}>
-                    {(['r', 'g', 'b'] as const).map((ch) => (
-                      <div
-                        key={ch}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          marginBottom: '3px',
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            color: ch === 'r' ? '#e74c3c' : ch === 'g' ? '#27ae60' : '#2980b9',
-                            width: '14px',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          {ch}
-                        </span>
-                        <input
-                          type="range"
-                          min={0}
-                          max={255}
-                          value={rgb[ch]}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value, 10)
-                            const newRgb = { ...rgb, [ch]: val }
-                            setters[index](rgbToHex(newRgb.r, newRgb.g, newRgb.b))
-                          }}
-                          style={{
-                            flex: 1,
-                            accentColor: ch === 'r' ? '#e74c3c' : ch === 'g' ? '#27ae60' : '#2980b9',
-                          }}
-                        />
-                        <span style={{ fontSize: '11px', fontFamily: 'monospace', width: '28px', textAlign: 'right' }}>
-                          {rgb[ch]}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )
         })}
       </div>
+
+      {/* ===== 颜色编辑弹窗 ===== */}
+      {editingIndex !== null && (() => {
+        const editColor = colors[editingIndex]
+        const editRgb = hexToRgb(editColor)
+        return (
+          <>
+            {/* 遮罩层 */}
+            <div
+              onClick={closeEditor}
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                zIndex: 1000,
+                animation: 'fadeIn 0.2s ease',
+              }}
+            />
+            {/* 弹窗卡片 */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 1001,
+                background: 'var(--md-sys-color-surface)',
+                borderRadius: 'var(--md-sys-shape-corner-extra-large, 28px)',
+                padding: '24px',
+                boxShadow: 'var(--md-sys-elevation-level3)',
+                width: '340px',
+                maxWidth: '90vw',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                animation: 'fadeIn 0.2s ease',
+              }}
+            >
+              {/* 弹窗头部 */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{
+                  margin: 0,
+                  font: 'var(--md-sys-typescale-title-medium)',
+                  color: 'var(--md-sys-color-on-surface)',
+                }}>
+                  🎨 {LABELS[editingIndex]}
+                </h3>
+                <div
+                  onClick={closeEditor}
+                  style={{
+                    cursor: 'pointer',
+                    fontSize: '20px',
+                    color: 'var(--md-sys-color-on-surface-variant)',
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '50%',
+                    transition: 'background 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--md-sys-color-surface-container-highest)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent'
+                  }}
+                >
+                  ×
+                </div>
+              </div>
+
+              {/* 当前颜色预览条 */}
+              <div style={{
+                height: '40px',
+                borderRadius: 'var(--md-sys-shape-corner-medium)',
+                backgroundColor: editColor,
+                marginBottom: '16px',
+                border: '1px solid var(--md-sys-color-outline-variant)',
+              }} />
+
+              {/* 颜色选择器 */}
+              <HexColorPicker
+                color={editColor}
+                onChange={handleEditorColorChange}
+                style={{ width: '100%', height: '180px', marginBottom: '16px' }}
+              />
+
+              {/* RGB 滑块 */}
+              <div style={{ marginBottom: '16px' }}>
+                {(['r', 'g', 'b'] as const).map((ch) => (
+                  <div
+                    key={ch}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: ch === 'r' ? '#e74c3c' : ch === 'g' ? '#27ae60' : '#2980b9',
+                        width: '14px',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {ch}
+                    </span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={255}
+                      value={editRgb[ch]}
+                      onChange={(e) => handleEditorSliderChange(ch, parseInt(e.target.value, 10))}
+                      style={{
+                        flex: 1,
+                        accentColor: ch === 'r' ? '#e74c3c' : ch === 'g' ? '#27ae60' : '#2980b9',
+                      }}
+                    />
+                    <span style={{ fontSize: '12px', fontFamily: 'monospace', width: '28px', textAlign: 'right' }}>
+                      {editRgb[ch]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* RGB 文本输入框 */}
+              <div>
+                <label style={{
+                  display: 'block',
+                  font: 'var(--md-sys-typescale-label-small)',
+                  color: 'var(--md-sys-color-on-surface-variant)',
+                  marginBottom: '4px',
+                }}>
+                  RGB 输入
+                </label>
+                <input
+                  type="text"
+                  value={rgbInputValue}
+                  onChange={(e) => handleRgbInput(e.target.value)}
+                  placeholder="R,G,B（如 178,34,34）"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: 'var(--md-sys-shape-corner-small)',
+                    border: `1px solid ${rgbInputError ? 'var(--md-sys-color-error)' : 'var(--md-sys-color-outline)'}`,
+                    background: 'var(--md-sys-color-surface-container)',
+                    color: 'var(--md-sys-color-on-surface)',
+                    font: 'var(--md-sys-typescale-body-medium)',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    transition: 'border-color 0.2s ease',
+                  }}
+                  onFocus={(e) => {
+                    if (!rgbInputError) {
+                      e.currentTarget.style.borderColor = 'var(--md-sys-color-primary)'
+                    }
+                  }}
+                  onBlur={(e) => {
+                    if (!rgbInputError) {
+                      e.currentTarget.style.borderColor = 'var(--md-sys-color-outline)'
+                    }
+                  }}
+                />
+                {rgbInputError && (
+                  <span style={{
+                    font: 'var(--md-sys-typescale-body-small)',
+                    color: 'var(--md-sys-color-error)',
+                    marginTop: '4px',
+                    display: 'block',
+                  }}>
+                    请输入合法的 RGB 值（0-255），以英文逗号分隔
+                  </span>
+                )}
+              </div>
+            </div>
+          </>
+        )
+      })()}
     </div>
   )
 }

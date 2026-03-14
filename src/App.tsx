@@ -175,7 +175,7 @@ function App() {
           color: 'var(--md-sys-color-on-surface)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           boxShadow: 'var(--md-sys-elevation-level2)',
           position: 'fixed',
           top: 0,
@@ -184,37 +184,39 @@ function App() {
           zIndex: 100,
         }}
       >
-        <div>
-          <h1
-            style={{
-              margin: 0,
-              font: 'var(--md-sys-typescale-title-large)',
-              letterSpacing: '1px',
-              color: 'var(--md-sys-color-primary)',
-            }}
-          >
-            DONEK
-          </h1>
-          <p
-            style={{
-              margin: '2px 0 0',
-              font: 'var(--md-sys-typescale-body-small)',
-              color: 'var(--md-sys-color-on-surface-variant)',
-            }}
-          >
-            滑雪板配色定制
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div>
+            <h1
+              style={{
+                margin: 0,
+                font: 'var(--md-sys-typescale-title-large)',
+                letterSpacing: '1px',
+                color: 'var(--md-sys-color-primary)',
+              }}
+            >
+              DONEK
+            </h1>
+            <p
+              style={{
+                margin: '2px 0 0',
+                font: 'var(--md-sys-typescale-body-small)',
+                color: 'var(--md-sys-color-on-surface-variant)',
+              }}
+            >
+              滑雪板配色定制
+            </p>
+          </div>
+          {/* 导出按钮（紧跟标题右侧） */}
+          <ExportCanvas
+            topPrimary={topPrimary}
+            topSecondary={topSecondary}
+            basePattern={basePattern}
+            baseBg={baseBg}
+            topsheetSvg={topsheetSvgRaw}
+            baseSvg={baseSvgRaw}
+            isMobile={isMobile}
+          />
         </div>
-        {/* 导出按钮（集成到 header 右侧） */}
-        <ExportCanvas
-          topPrimary={topPrimary}
-          topSecondary={topSecondary}
-          basePattern={basePattern}
-          baseBg={baseBg}
-          topsheetSvg={topsheetSvgRaw}
-          baseSvg={baseSvgRaw}
-          isMobile={isMobile}
-        />
       </header>
 
       {/* 主体区域 */}

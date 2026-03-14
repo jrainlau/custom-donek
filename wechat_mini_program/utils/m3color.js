@@ -113,6 +113,75 @@ function hslToRgb(h, s, l) {
 }
 
 /**
+ * 计算相对亮度 (sRGB)
+ * @param {string} hex
+ * @returns {number}
+ */
+function getRelativeLuminance(hex) {
+  function toLinear(c) {
+    c /= 255
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+  }
+  var rgb = hexToRgb(hex)
+  var r = toLinear(rgb.r)
+  var g = toLinear(rgb.g)
+  var b = toLinear(rgb.b)
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/**
+ * 计算对比度
+ * @param {string} hex1
+ * @param {string} hex2
+ * @returns {number}
+ */
+function getContrastRatio(hex1, hex2) {
+  var l1 = getRelativeLuminance(hex1)
+  var l2 = getRelativeLuminance(hex2)
+  var lighter = Math.max(l1, l2)
+  var darker = Math.min(l1, l2)
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+/**
+ * 生成与主色对比明显的动态对比色
+ * @param {string} primaryHex
+ * @returns {string}
+ */
+function generateContrastColor(primaryHex) {
+  var rgb = hexToRgb(primaryHex)
+  var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  var targetL, targetS
+
+  if (hsl.l <= 0.5) {
+    targetL = 0.85
+    targetS = Math.min(1, hsl.s * 0.7 + 0.1)
+  } else {
+    targetL = 0.18
+    targetS = Math.min(1, hsl.s * 0.9 + 0.15)
+  }
+
+  var resultRgb = hslToRgb(hsl.h, targetS, targetL)
+  var result = rgbToHex(resultRgb.r, resultRgb.g, resultRgb.b)
+  var ratio = getContrastRatio(primaryHex, result)
+
+  var attempts = 0
+  while (ratio < 3 && attempts < 20) {
+    if (hsl.l <= 0.5) {
+      targetL = Math.min(1, targetL + 0.03)
+    } else {
+      targetL = Math.max(0, targetL - 0.03)
+    }
+    resultRgb = hslToRgb(hsl.h, targetS, targetL)
+    result = rgbToHex(resultRgb.r, resultRgb.g, resultRgb.b)
+    ratio = getContrastRatio(primaryHex, result)
+    attempts++
+  }
+
+  return result
+}
+
+/**
  * 从种子颜色生成 M3 风格的配色方案
  *
  * 算法原理：
@@ -137,8 +206,8 @@ function generateM3Palette(seedHex) {
     var primaryRgb = hslToRgb(h, primaryS, 0.40)
     var topPrimary = rgbToHex(primaryRgb.r, primaryRgb.g, primaryRgb.b)
 
-    // onPrimary: 白色（在深色主色上的前景色）
-    var topSecondary = '#FFFFFF'
+    // 动态对比色，用于板面 logo（替代原来的白色硬编码）
+    var topSecondary = generateContrastColor(topPrimary)
 
     // primaryContainer: 高亮度，低饱和度的浅色容器
     var containerS = Math.min(1, s * 0.6 + 0.05)

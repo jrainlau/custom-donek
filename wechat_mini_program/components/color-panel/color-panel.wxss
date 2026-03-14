@@ -120,18 +120,103 @@
   background-color: rgba(0, 0, 0, 0.08);
 }
 
-.slot-expand-btn {
-  font-size: 28rpx;
-  opacity: 0.7;
-  padding: 0 8rpx;
+.slot-edit-btn {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  background-color: rgba(0, 0, 0, 0.12);
 }
 
-/* 展开的编辑器 */
-.slot-editor {
-  margin-top: 16rpx;
+/* 弹窗遮罩层 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 弹窗卡片 */
+.modal-card {
+  width: 620rpx;
+  max-height: 90vh;
   background: var(--md-sys-color-surface);
-  border-radius: 16rpx;
-  padding: 20rpx;
+  border-radius: 56rpx;
+  padding: 48rpx;
+  box-shadow: var(--md-sys-elevation-level3);
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.modal-close {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 40rpx;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.modal-color-preview {
+  height: 80rpx;
+  border-radius: var(--md-sys-shape-corner-medium);
+  margin-bottom: 32rpx;
+  border: 2rpx solid var(--md-sys-color-outline-variant);
+}
+
+/* RGB 输入框区域 */
+.rgb-input-section {
+  margin-top: 24rpx;
+}
+
+.rgb-input-label {
+  display: block;
+  font-size: 22rpx;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 8rpx;
+}
+
+.rgb-input {
+  width: 100%;
+  padding: 20rpx 24rpx;
+  border-radius: var(--md-sys-shape-corner-small);
+  border: 2rpx solid var(--md-sys-color-outline);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font-size: 28rpx;
+  font-family: monospace;
+  box-sizing: border-box;
+}
+
+.rgb-input.error {
+  border-color: var(--md-sys-color-error);
+}
+
+.rgb-input-error {
+  display: block;
+  font-size: 22rpx;
+  color: var(--md-sys-color-error);
+  margin-top: 8rpx;
 }
 
 .rgb-sliders {

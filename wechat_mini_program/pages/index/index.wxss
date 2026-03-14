@@ -17,11 +17,18 @@
 .navbar-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 0 32rpx;
 }
 
 .navbar-title-area {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.navbar-title-text {
   display: flex;
   flex-direction: column;
 }

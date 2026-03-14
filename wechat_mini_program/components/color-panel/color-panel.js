@@ -18,8 +18,11 @@ Component({
 
   data: {
     labels: LABELS,
-    expandedIndex: -1,
+    editingIndex: -1,
+    editingItem: null,
     copiedIndex: -1,
+    rgbInputValue: '',
+    rgbInputError: false,
     // 颜色列表（方便模板遍历）
     colorItems: [],
   },
@@ -78,11 +81,116 @@ Component({
       this.triggerEvent('generate')
     },
 
-    // 颜色槽位点击展开/折叠
-    onToggleExpand: function (e) {
+    // 颜色槽位点击展开/折叠 - 已移除，改为弹窗
+
+    // 打开弹窗编辑器
+    onOpenEditor: function (e) {
       var index = e.currentTarget.dataset.index
+      var colors = [
+        this.data.topPrimary,
+        this.data.topSecondary,
+        this.data.basePattern,
+        this.data.baseBg,
+      ]
+      var color = colors[index]
+      var rgb = util.hexToRgb(color)
       this.setData({
-        expandedIndex: this.data.expandedIndex === index ? -1 : index,
+        editingIndex: index,
+        editingItem: {
+          label: LABELS[index],
+          color: color,
+          r: rgb.r,
+          g: rgb.g,
+          b: rgb.b,
+          key: COLOR_KEYS[index],
+        },
+        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
+        rgbInputError: false,
+      })
+    },
+
+    // 关闭弹窗编辑器
+    onCloseEditor: function () {
+      this.setData({
+        editingIndex: -1,
+        editingItem: null,
+        rgbInputValue: '',
+        rgbInputError: false,
+      })
+    },
+
+    // 弹窗内拾色器颜色变化
+    onEditorPickerChange: function (e) {
+      var color = e.detail.color
+      var index = this.data.editingIndex
+      if (index < 0) return
+      var rgb = util.hexToRgb(color)
+      this.setData({
+        'editingItem.color': color,
+        'editingItem.r': rgb.r,
+        'editingItem.g': rgb.g,
+        'editingItem.b': rgb.b,
+        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
+        rgbInputError: false,
+      })
+      this.triggerEvent('colorchange', {
+        key: COLOR_KEYS[index],
+        color: color,
+      })
+    },
+
+    // 弹窗内 RGB 滑块变化
+    onEditorSliderChange: function (e) {
+      var channel = e.currentTarget.dataset.channel
+      var value = e.detail.value
+      var index = this.data.editingIndex
+      if (index < 0) return
+      var item = this.data.editingItem
+      var rgb = { r: item.r, g: item.g, b: item.b }
+      rgb[channel] = value
+      var newHex = util.rgbToHex(rgb.r, rgb.g, rgb.b)
+      this.setData({
+        'editingItem.color': newHex,
+        'editingItem.r': rgb.r,
+        'editingItem.g': rgb.g,
+        'editingItem.b': rgb.b,
+        rgbInputValue: rgb.r + ',' + rgb.g + ',' + rgb.b,
+        rgbInputError: false,
+      })
+      this.triggerEvent('colorchange', {
+        key: COLOR_KEYS[index],
+        color: newHex,
+      })
+    },
+
+    // RGB 文本输入
+    onRgbInput: function (e) {
+      var value = e.detail.value
+      this.setData({ rgbInputValue: value })
+      var index = this.data.editingIndex
+      if (index < 0) return
+      var parts = value.split(',')
+      if (parts.length !== 3) {
+        this.setData({ rgbInputError: value.trim().length > 0 })
+        return
+      }
+      var nums = parts.map(function (p) { return parseInt(p.trim(), 10) })
+      var valid = nums.every(function (n) { return !isNaN(n) && n >= 0 && n <= 255 })
+      if (!valid) {
+        this.setData({ rgbInputError: true })
+        return
+      }
+      var newHex = util.rgbToHex(nums[0], nums[1], nums[2])
+      this.setData({
+        rgbInputError: false,
+        'editingItem.color': newHex,
+        'editingItem.r': nums[0],
+        'editingItem.g': nums[1],
+        'editingItem.b': nums[2],
+      })
+      this.triggerEvent('colorchange', {
+        key: COLOR_KEYS[index],
+        color: newHex,
       })
     },
 
@@ -104,37 +212,9 @@ Component({
       }, 1500)
     },
 
-    // 拾色器颜色变化
-    onPickerColorChange: function (e) {
-      var index = e.currentTarget.dataset.index
-      var color = e.detail.color
-      this.triggerEvent('colorchange', {
-        key: COLOR_KEYS[index],
-        color: color,
-      })
-    },
+    // 拾色器颜色变化 - 已移除，改为弹窗内处理
 
-    // RGB 滑块变化
-    onSliderChange: function (e) {
-      var index = parseInt(e.currentTarget.dataset.index)
-      var channel = e.currentTarget.dataset.channel
-      var value = e.detail.value
-
-      var colors = [
-        this.data.topPrimary,
-        this.data.topSecondary,
-        this.data.basePattern,
-        this.data.baseBg,
-      ]
-      var rgb = util.hexToRgb(colors[index])
-      rgb[channel] = value
-      var newHex = util.rgbToHex(rgb.r, rgb.g, rgb.b)
-
-      this.triggerEvent('colorchange', {
-        key: COLOR_KEYS[index],
-        color: newHex,
-      })
-    },
+    // RGB 滑块变化 - 已移除，改为弹窗内处理
 
     // 长按色块 - 交换颜色
     onLongPress: function (e) {

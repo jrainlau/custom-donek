@@ -3,16 +3,18 @@
   <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px; height: {{navBarHeight}}px;">
     <view class="navbar-content" style="height: {{navBarHeight - statusBarHeight}}px;">
       <view class="navbar-title-area">
-        <text class="navbar-title">DONEK</text>
-        <text class="navbar-subtitle">滑雪板配色定制</text>
-      </view>
-      <!-- 导出按钮 -->
-      <view
-        class="export-btn {{exporting ? 'disabled' : ''}}"
-        bindtap="onExport"
-      >
-        <text wx:if="{{exporting}}">⏳</text>
-        <text wx:else>📸</text>
+        <view class="navbar-title-text">
+          <text class="navbar-title">DONEK</text>
+          <text class="navbar-subtitle">滑雪板配色定制</text>
+        </view>
+        <!-- 导出按钮（紧跟标题右侧） -->
+        <view
+          class="export-btn {{exporting ? 'disabled' : ''}}"
+          bindtap="onExport"
+        >
+          <text wx:if="{{exporting}}">⏳</text>
+          <text wx:else>📸</text>
+        </view>
       </view>
     </view>
   </view>

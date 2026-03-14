@@ -48,7 +48,7 @@
       <!-- 拖拽提示图标 -->
       <text class="slot-drag-icon" style="color: {{item.textColor}};">⠿</text>
 
-      <!-- 底部：RGB 值 + 展开按钮 -->
+      <!-- 底部：RGB 值 + 修改按钮 -->
       <view class="slot-bottom">
         <view
           class="slot-rgb"
@@ -58,66 +58,90 @@
           <text style="color: {{item.textColor}};">{{copiedIndex === item.index ? '✅ 已复制' : item.rgbString}}</text>
         </view>
         <view
-          class="slot-expand-btn"
+          class="slot-edit-btn"
           data-index="{{item.index}}"
-          catchtap="onToggleExpand"
+          catchtap="onOpenEditor"
         >
-          <text style="color: {{item.textColor}};">{{expandedIndex === item.index ? '▲' : '▼'}}</text>
+          <text style="color: {{item.textColor}};">修改</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 颜色编辑弹窗 ===== -->
+  <view class="modal-overlay" wx:if="{{editingIndex >= 0}}" catchtap="onCloseEditor">
+    <view class="modal-card" catchtap="">
+      <!-- 弹窗头部 -->
+      <view class="modal-header">
+        <text class="modal-title">🎨 {{editingItem.label}}</text>
+        <view class="modal-close" catchtap="onCloseEditor">
+          <text>×</text>
         </view>
       </view>
 
-      <!-- 展开的详细编辑器 -->
-      <view class="slot-editor" wx:if="{{expandedIndex === item.index}}" catchtap="">
-        <color-picker
-          color="{{item.color}}"
-          data-index="{{item.index}}"
-          bindcolorchange="onPickerColorChange"
-        />
-        <!-- RGB 滑块 -->
-        <view class="rgb-sliders">
-          <view class="slider-row">
-            <text class="channel-label" style="color: #e74c3c;">R</text>
-            <slider
-              min="0"
-              max="255"
-              value="{{item.r}}"
-              activeColor="#e74c3c"
-              block-size="16"
-              data-index="{{item.index}}"
-              data-channel="r"
-              bindchange="onSliderChange"
-            />
-            <text class="channel-value">{{item.r}}</text>
-          </view>
-          <view class="slider-row">
-            <text class="channel-label" style="color: #27ae60;">G</text>
-            <slider
-              min="0"
-              max="255"
-              value="{{item.g}}"
-              activeColor="#27ae60"
-              block-size="16"
-              data-index="{{item.index}}"
-              data-channel="g"
-              bindchange="onSliderChange"
-            />
-            <text class="channel-value">{{item.g}}</text>
-          </view>
-          <view class="slider-row">
-            <text class="channel-label" style="color: #2980b9;">B</text>
-            <slider
-              min="0"
-              max="255"
-              value="{{item.b}}"
-              activeColor="#2980b9"
-              block-size="16"
-              data-index="{{item.index}}"
-              data-channel="b"
-              bindchange="onSliderChange"
-            />
-            <text class="channel-value">{{item.b}}</text>
-          </view>
+      <!-- 当前颜色预览条 -->
+      <view class="modal-color-preview" style="background-color: {{editingItem.color}};"></view>
+
+      <!-- 拾色器 -->
+      <color-picker
+        color="{{editingItem.color}}"
+        bindcolorchange="onEditorPickerChange"
+      />
+
+      <!-- RGB 滑块 -->
+      <view class="rgb-sliders">
+        <view class="slider-row">
+          <text class="channel-label" style="color: #e74c3c;">R</text>
+          <slider
+            min="0"
+            max="255"
+            value="{{editingItem.r}}"
+            activeColor="#e74c3c"
+            block-size="16"
+            data-channel="r"
+            bindchange="onEditorSliderChange"
+          />
+          <text class="channel-value">{{editingItem.r}}</text>
         </view>
+        <view class="slider-row">
+          <text class="channel-label" style="color: #27ae60;">G</text>
+          <slider
+            min="0"
+            max="255"
+            value="{{editingItem.g}}"
+            activeColor="#27ae60"
+            block-size="16"
+            data-channel="g"
+            bindchange="onEditorSliderChange"
+          />
+          <text class="channel-value">{{editingItem.g}}</text>
+        </view>
+        <view class="slider-row">
+          <text class="channel-label" style="color: #2980b9;">B</text>
+          <slider
+            min="0"
+            max="255"
+            value="{{editingItem.b}}"
+            activeColor="#2980b9"
+            block-size="16"
+            data-channel="b"
+            bindchange="onEditorSliderChange"
+          />
+          <text class="channel-value">{{editingItem.b}}</text>
+        </view>
+      </view>
+
+      <!-- RGB 文本输入框 -->
+      <view class="rgb-input-section">
+        <text class="rgb-input-label">RGB 输入</text>
+        <input
+          class="rgb-input {{rgbInputError ? 'error' : ''}}"
+          type="text"
+          value="{{rgbInputValue}}"
+          placeholder="R,G,B（如 178,34,34）"
+          bindinput="onRgbInput"
+        />
+        <text class="rgb-input-error" wx:if="{{rgbInputError}}">请输入合法的 RGB 值（0-255），以英文逗号分隔</text>
       </view>
     </view>
   </view>

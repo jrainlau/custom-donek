@@ -4,7 +4,7 @@
 
 page {
   /* ---------- M3 Color Tokens (Light Theme) ---------- */
-  --md-sys-color-primary: #6750A4;
+  --md-sys-color-primary: #FF69B4;
   --md-sys-color-on-primary: #FFFFFF;
   --md-sys-color-primary-container: #EADDFF;
   --md-sys-color-on-primary-container: #21005D;

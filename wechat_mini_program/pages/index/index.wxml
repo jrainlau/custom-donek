@@ -1,0 +1,91 @@
+<view class="page-container">
+  <!-- ========== 自定义导航栏 ========== -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px; height: {{navBarHeight}}px;">
+    <view class="navbar-content" style="height: {{navBarHeight - statusBarHeight}}px;">
+      <view class="navbar-title-area">
+        <text class="navbar-title">DONEK</text>
+        <text class="navbar-subtitle">滑雪板配色定制</text>
+      </view>
+      <!-- 导出按钮 -->
+      <view
+        class="export-btn {{exporting ? 'disabled' : ''}}"
+        bindtap="onExport"
+      >
+        <text wx:if="{{exporting}}">⏳</text>
+        <text wx:else>📸</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导航栏占位 -->
+  <view style="height: {{navBarHeight}}px;"></view>
+
+  <!-- ========== SVG 预览区 ========== -->
+  <view class="preview-section">
+    <view class="preview-row">
+      <svg-preview
+        svgRaw="{{topsheetSvg}}"
+        primaryColor="{{topPrimary}}"
+        secondaryColor="{{topSecondary}}"
+        primaryClass="color-primary"
+        secondaryClass="color-secondary"
+        label="板面 Topsheet"
+      />
+      <svg-preview
+        svgRaw="{{baseSvg}}"
+        primaryColor="{{basePattern}}"
+        secondaryColor="{{baseBg}}"
+        primaryClass="color-pattern"
+        secondaryClass="color-bg"
+        label="板底 Base"
+      />
+    </view>
+  </view>
+
+  <!-- ========== 功能区 ========== -->
+  <view class="content-area">
+    <!-- 颜色配置面板 -->
+    <view class="card">
+      <color-panel
+        topPrimary="{{topPrimary}}"
+        topSecondary="{{topSecondary}}"
+        basePattern="{{basePattern}}"
+        baseBg="{{baseBg}}"
+        seedColor="{{seedColor}}"
+        showSeedPicker="{{showSeedPicker}}"
+        error="{{seedError}}"
+        bindcolorchange="onColorChange"
+        bindswapcolors="onSwapColors"
+        bindtoggleseedpicker="onToggleSeedPicker"
+        bindseedcolorchange="onSeedColorChange"
+        bindgenerate="onGenerate"
+      />
+    </view>
+
+    <!-- 预设配色模板 -->
+    <view class="card">
+      <preset-templates
+        activeSchemeId="{{activeSchemeId}}"
+        bindselect="onPresetSelect"
+      />
+    </view>
+
+    <!-- 用户自定义配色 -->
+    <view class="card">
+      <user-schemes
+        topPrimary="{{topPrimary}}"
+        topSecondary="{{topSecondary}}"
+        basePattern="{{basePattern}}"
+        baseBg="{{baseBg}}"
+        bindselect="onUserSchemeSelect"
+      />
+    </view>
+  </view>
+
+  <!-- ========== 离屏导出 Canvas ========== -->
+  <canvas
+    id="export-canvas"
+    type="2d"
+    class="export-canvas"
+  />
+</view>

@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "svg-preview": "../../components/svg-preview/svg-preview",
+    "color-panel": "../../components/color-panel/color-panel",
+    "preset-templates": "../../components/preset-templates/preset-templates",
+    "user-schemes": "../../components/user-schemes/user-schemes"
+  }
+}

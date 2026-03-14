@@ -1,0 +1,98 @@
+.page-container {
+  min-height: 100vh;
+  background: var(--md-sys-color-surface);
+}
+
+/* ========== 自定义导航栏 ========== */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+}
+
+.navbar-title-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  color: var(--md-sys-color-primary);
+  line-height: 1.2;
+}
+
+.navbar-subtitle {
+  font-size: 22rpx;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 2rpx;
+}
+
+.export-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  box-shadow: var(--md-sys-elevation-level1);
+  transition: all 0.2s;
+}
+
+.export-btn.disabled {
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ========== SVG 预览区 ========== */
+.preview-section {
+  background: var(--md-sys-color-surface);
+  padding: 16rpx 24rpx;
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.preview-row {
+  display: flex;
+  gap: 16rpx;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ========== 功能区 ========== */
+.content-area {
+  padding: 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.card {
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-large);
+  padding: 32rpx;
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+/* ========== 离屏导出 Canvas ========== */
+.export-canvas {
+  position: fixed;
+  left: -9999rpx;
+  top: 0;
+  width: 750px;
+  height: 1000px;
+}

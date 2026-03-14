@@ -1,0 +1,124 @@
+<view class="color-panel">
+  <!-- 标题栏 + 种子颜色 + 智能配色按钮 -->
+  <view class="panel-header">
+    <text class="panel-title">🎨 颜色配置</text>
+    <view class="header-actions">
+      <!-- 种子颜色色块 -->
+      <view
+        class="seed-color-block {{showSeedPicker ? 'active' : ''}}"
+        style="background-color: {{seedColor}};"
+        bindtap="onToggleSeedPicker"
+      />
+      <!-- 智能配色按钮 -->
+      <view class="generate-btn" bindtap="onGenerate">智能配色</view>
+    </view>
+  </view>
+
+  <!-- 种子颜色拾色器 -->
+  <view class="seed-picker-wrapper" wx:if="{{showSeedPicker}}">
+    <color-picker
+      color="{{seedColor}}"
+      bindcolorchange="onSeedColorChange"
+    />
+  </view>
+
+  <!-- 错误提示 -->
+  <view class="error-tip" wx:if="{{error}}">
+    <text>⚠️ {{error}}</text>
+  </view>
+
+  <!-- 拖拽提示 -->
+  <view class="drag-tip">
+    <text>💡 长按色块可交换颜色</text>
+  </view>
+
+  <!-- 2×2 色块网格 -->
+  <view class="color-grid">
+    <view
+      wx:for="{{colorItems}}"
+      wx:key="index"
+      class="color-slot"
+      style="background-color: {{item.color}};"
+      data-index="{{item.index}}"
+      bindlongpress="onLongPress"
+    >
+      <!-- 标签 -->
+      <text class="slot-label" style="color: {{item.textColor}};">{{item.label}}</text>
+
+      <!-- 拖拽提示图标 -->
+      <text class="slot-drag-icon" style="color: {{item.textColor}};">⠿</text>
+
+      <!-- 底部：RGB 值 + 展开按钮 -->
+      <view class="slot-bottom">
+        <view
+          class="slot-rgb"
+          data-index="{{item.index}}"
+          catchtap="onCopyColor"
+        >
+          <text style="color: {{item.textColor}};">{{copiedIndex === item.index ? '✅ 已复制' : item.rgbString}}</text>
+        </view>
+        <view
+          class="slot-expand-btn"
+          data-index="{{item.index}}"
+          catchtap="onToggleExpand"
+        >
+          <text style="color: {{item.textColor}};">{{expandedIndex === item.index ? '▲' : '▼'}}</text>
+        </view>
+      </view>
+
+      <!-- 展开的详细编辑器 -->
+      <view class="slot-editor" wx:if="{{expandedIndex === item.index}}" catchtap="">
+        <color-picker
+          color="{{item.color}}"
+          data-index="{{item.index}}"
+          bindcolorchange="onPickerColorChange"
+        />
+        <!-- RGB 滑块 -->
+        <view class="rgb-sliders">
+          <view class="slider-row">
+            <text class="channel-label" style="color: #e74c3c;">R</text>
+            <slider
+              min="0"
+              max="255"
+              value="{{item.r}}"
+              activeColor="#e74c3c"
+              block-size="16"
+              data-index="{{item.index}}"
+              data-channel="r"
+              bindchange="onSliderChange"
+            />
+            <text class="channel-value">{{item.r}}</text>
+          </view>
+          <view class="slider-row">
+            <text class="channel-label" style="color: #27ae60;">G</text>
+            <slider
+              min="0"
+              max="255"
+              value="{{item.g}}"
+              activeColor="#27ae60"
+              block-size="16"
+              data-index="{{item.index}}"
+              data-channel="g"
+              bindchange="onSliderChange"
+            />
+            <text class="channel-value">{{item.g}}</text>
+          </view>
+          <view class="slider-row">
+            <text class="channel-label" style="color: #2980b9;">B</text>
+            <slider
+              min="0"
+              max="255"
+              value="{{item.b}}"
+              activeColor="#2980b9"
+              block-size="16"
+              data-index="{{item.index}}"
+              data-channel="b"
+              bindchange="onSliderChange"
+            />
+            <text class="channel-value">{{item.b}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

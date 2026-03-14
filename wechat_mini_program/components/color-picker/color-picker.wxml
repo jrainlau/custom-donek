@@ -1,0 +1,41 @@
+<view class="color-picker-container">
+  <!-- 饱和度/亮度面板 -->
+  <view
+    id="saturation-panel"
+    class="saturation-panel"
+    catchtouchstart="onPanelTouchStart"
+    catchtouchmove="onPanelTouchMove"
+    catchtouchend="onPanelTouchEnd"
+  >
+    <canvas
+      id="saturation-canvas"
+      type="2d"
+      class="saturation-canvas"
+    />
+    <!-- 选择指示器 -->
+    <view
+      class="panel-indicator"
+      style="left: {{panelX}}px; top: {{panelY}}px;"
+    />
+  </view>
+
+  <!-- 色相条 -->
+  <view
+    id="hue-bar"
+    class="hue-bar"
+    catchtouchstart="onHueTouchStart"
+    catchtouchmove="onHueTouchMove"
+    catchtouchend="onHueTouchEnd"
+  >
+    <canvas
+      id="hue-canvas"
+      type="2d"
+      class="hue-canvas"
+    />
+    <!-- 色相指示器 -->
+    <view
+      class="hue-indicator"
+      style="left: {{hueX}}px;"
+    />
+  </view>
+</view>

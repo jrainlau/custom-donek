@@ -1,0 +1,36 @@
+<view class="user-schemes">
+  <!-- 标题 + 保存按钮 -->
+  <view class="section-header">
+    <text class="section-title">💾 我的配色</text>
+    <view class="save-btn" bindtap="onSave">保存当前配色</view>
+  </view>
+
+  <!-- 已保存配色列表 -->
+  <view class="empty-tip" wx:if="{{schemes.length === 0}}">
+    <text>还没有保存的配色方案</text>
+  </view>
+
+  <view class="schemes-grid" wx:else>
+    <view
+      wx:for="{{schemes}}"
+      wx:key="id"
+      class="scheme-item"
+      data-index="{{index}}"
+      bindtap="onSelectScheme"
+    >
+      <!-- 删除按钮 -->
+      <view
+        class="delete-btn"
+        data-index="{{index}}"
+        catchtap="onDeleteScheme"
+      >✕</view>
+      <!-- 4 色块 -->
+      <view class="scheme-colors">
+        <view class="color-dot" style="background-color: {{item.topPrimary}};"></view>
+        <view class="color-dot" style="background-color: {{item.topSecondary}};"></view>
+        <view class="color-dot" style="background-color: {{item.basePattern}};"></view>
+        <view class="color-dot" style="background-color: {{item.baseBg}};"></view>
+      </view>
+    </view>
+  </view>
+</view>

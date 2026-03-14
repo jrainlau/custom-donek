@@ -1,0 +1,19 @@
+<view class="preset-templates">
+  <text class="section-title">🎯 预设配色</text>
+  <view class="preset-grid">
+    <view
+      wx:for="{{schemes}}"
+      wx:key="id"
+      class="preset-item {{activeSchemeId === item.id ? 'active' : ''}}"
+      data-index="{{index}}"
+      bindtap="onSelectScheme"
+    >
+      <view class="preset-colors">
+        <view class="color-dot" style="background-color: {{item.topPrimary}};"></view>
+        <view class="color-dot" style="background-color: {{item.topSecondary}};"></view>
+        <view class="color-dot" style="background-color: {{item.basePattern}};"></view>
+        <view class="color-dot" style="background-color: {{item.baseBg}};"></view>
+      </view>
+    </view>
+  </view>
+</view>

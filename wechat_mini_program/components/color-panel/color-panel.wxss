@@ -1,0 +1,165 @@
+.color-panel {
+  width: 100%;
+}
+
+/* 标题栏 */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+  border-bottom: 1rpx solid var(--md-sys-color-outline-variant);
+  padding-bottom: 16rpx;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.panel-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.seed-color-block {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid var(--md-sys-color-outline);
+  transition: all 0.2s;
+}
+
+.seed-color-block.active {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 4rpx var(--md-sys-color-primary-container);
+}
+
+.generate-btn {
+  padding: 12rpx 32rpx;
+  border-radius: 32rpx;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: 24rpx;
+  font-weight: 500;
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+/* 种子颜色拾色器 */
+.seed-picker-wrapper {
+  margin-bottom: 24rpx;
+}
+
+/* 错误提示 */
+.error-tip {
+  padding: 16rpx 24rpx;
+  border-radius: var(--md-sys-shape-corner-small);
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  font-size: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+/* 拖拽提示 */
+.drag-tip {
+  font-size: 24rpx;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 16rpx;
+}
+
+/* 2×2 色块网格 */
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.color-slot {
+  width: calc(50% - 10rpx);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: 24rpx 20rpx;
+  border: 2rpx solid var(--md-sys-color-outline-variant);
+  position: relative;
+  min-height: 144rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.slot-label {
+  font-size: 24rpx;
+  font-weight: 700;
+  opacity: 0.9;
+  margin-bottom: 8rpx;
+}
+
+.slot-drag-icon {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  font-size: 28rpx;
+  opacity: 0.5;
+}
+
+.slot-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slot-rgb {
+  font-size: 22rpx;
+  font-family: monospace;
+  opacity: 0.8;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.slot-expand-btn {
+  font-size: 28rpx;
+  opacity: 0.7;
+  padding: 0 8rpx;
+}
+
+/* 展开的编辑器 */
+.slot-editor {
+  margin-top: 16rpx;
+  background: var(--md-sys-color-surface);
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+
+.rgb-sliders {
+  margin-top: 16rpx;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 6rpx;
+}
+
+.channel-label {
+  font-size: 22rpx;
+  font-weight: 700;
+  width: 28rpx;
+  text-align: center;
+}
+
+.slider-row slider {
+  flex: 1;
+}
+
+.channel-value {
+  font-size: 22rpx;
+  font-family: monospace;
+  width: 56rpx;
+  text-align: right;
+  color: var(--md-sys-color-on-surface);
+}

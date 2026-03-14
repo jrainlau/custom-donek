@@ -1,0 +1,54 @@
+.color-picker-container {
+  width: 100%;
+}
+
+.saturation-panel {
+  position: relative;
+  width: 100%;
+  height: 280rpx;
+  border-radius: var(--md-sys-shape-corner-small);
+  overflow: hidden;
+}
+
+.saturation-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.panel-indicator {
+  position: absolute;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 4rpx solid #ffffff;
+  box-shadow: 0 0 4rpx rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hue-bar {
+  position: relative;
+  width: 100%;
+  height: 40rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  margin-top: 16rpx;
+}
+
+.hue-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.hue-indicator {
+  position: absolute;
+  top: 50%;
+  width: 12rpx;
+  height: 48rpx;
+  border-radius: 6rpx;
+  border: 4rpx solid #ffffff;
+  box-shadow: 0 0 4rpx rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: transparent;
+}

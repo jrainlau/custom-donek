@@ -1,0 +1,11 @@
+<view class="svg-preview-container">
+  <text class="label" wx:if="{{label}}">{{label}}</text>
+  <view class="svg-wrapper">
+    <image
+      class="svg-image"
+      src="{{svgBase64Url}}"
+      mode="aspectFit"
+      wx:if="{{svgBase64Url}}"
+    />
+  </view>
+</view>

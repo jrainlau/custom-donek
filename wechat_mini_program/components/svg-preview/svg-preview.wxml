@@ -1,6 +1,17 @@
-<view class="svg-preview-container">
+<view class="svg-preview-container {{rotation != 0 ? 'rotated' : ''}}">
   <text class="label" wx:if="{{label}}">{{label}}</text>
-  <view class="svg-wrapper">
+  <!-- 旋转模式：image 固定竖直尺寸后 CSS 旋转90度 -->
+  <view class="svg-rotate-wrapper" wx:if="{{rotation != 0}}">
+    <image
+      class="svg-image-rotated"
+      src="{{svgBase64Url}}"
+      mode="aspectFit"
+      style="transform: rotate({{rotation}}deg);"
+      wx:if="{{svgBase64Url}}"
+    />
+  </view>
+  <!-- 普通模式 -->
+  <view class="svg-wrapper" wx:else>
     <image
       class="svg-image"
       src="{{svgBase64Url}}"

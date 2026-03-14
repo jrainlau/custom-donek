@@ -6,6 +6,11 @@
   width: 50%;
 }
 
+/* 旋转模式下宽度占满 */
+.svg-preview-container.rotated {
+  width: 100%;
+}
+
 .label {
   font-size: 22rpx;
   font-weight: 500;
@@ -13,6 +18,7 @@
   letter-spacing: 1rpx;
 }
 
+/* 普通模式 */
 .svg-wrapper {
   width: 100%;
   display: flex;
@@ -24,4 +30,26 @@
 .svg-image {
   width: 100%;
   height: 400rpx;
+}
+
+/* 旋转模式 - 外层容器 */
+/* SVG 原始比例 190:1000，旋转90°后视觉高度 = 可用宽度 × (190/1000) */
+/* 容器宽度约 702rpx(750-48rpx padding)，视觉高度约 133rpx */
+/* 但为了给旋转留空间，设置足够的高度 */
+.svg-rotate-wrapper {
+  width: 100%;
+  height: 140rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 旋转模式 - 图片 */
+/* image 先按竖直方向放置（宽小高大），然后 CSS 旋转90° */
+/* 旋转前 image: width = 容器视觉高度, height = 容器宽度 */
+/* 使用 rpx：width=140rpx, height=700rpx，旋转后视觉宽700rpx 高140rpx */
+.svg-image-rotated {
+  width: 140rpx;
+  height: 700rpx;
+  transform-origin: center center;
 }

@@ -22,14 +22,14 @@
 
   <!-- ========== SVG 预览区 ========== -->
   <view class="preview-section">
-    <view class="preview-row">
+    <view class="preview-column">
       <svg-preview
         svgRaw="{{topsheetSvg}}"
         primaryColor="{{topPrimary}}"
         secondaryColor="{{topSecondary}}"
         primaryClass="color-primary"
         secondaryClass="color-secondary"
-        label="板面 Topsheet"
+        rotation="{{-90}}"
       />
       <svg-preview
         svgRaw="{{baseSvg}}"
@@ -37,7 +37,7 @@
         secondaryColor="{{baseBg}}"
         primaryClass="color-pattern"
         secondaryClass="color-bg"
-        label="板底 Base"
+        rotation="{{90}}"
       />
     </view>
   </view>

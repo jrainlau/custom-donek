@@ -32,6 +32,11 @@ Component({
       type: String,
       value: '',
     },
+    // 旋转角度（用于横置显示）
+    rotation: {
+      type: Number,
+      value: 0,
+    },
   },
 
   data: {
@@ -96,12 +101,19 @@ Component({
       svg = svg.replace(/id="board-outline"/g, 'id="board-outline-' + instanceId + '"')
       svg = svg.replace(/url\(#board-outline\)/g, 'url(#board-outline-' + instanceId + ')')
 
+      // 提取原始 width/height 用于 viewBox
+      var wMatch = svg.match(/\bwidth="(\d+)"/)
+      var hMatch = svg.match(/\bheight="(\d+)"/)
+      var hasViewBox = /viewBox/.test(svg)
+
       // 移除固定 width/height，改为 100%
       svg = svg.replace(/(<svg[^>]*?)\s+width="[^"]*"/g, '$1')
       svg = svg.replace(/(<svg[^>]*?)\s+height="[^"]*"/g, '$1')
 
       // 确保有 viewBox
-      if (!/viewBox/.test(svg)) {
+      if (!hasViewBox && wMatch && hMatch) {
+        svg = svg.replace('<svg', '<svg viewBox="0 0 ' + wMatch[1] + ' ' + hMatch[1] + '"')
+      } else if (!hasViewBox) {
         svg = svg.replace('<svg', '<svg viewBox="0 0 190 1000"')
       }
 

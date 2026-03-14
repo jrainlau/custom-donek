@@ -62,15 +62,17 @@
 /* ========== SVG 预览区 ========== */
 .preview-section {
   background: var(--md-sys-color-surface);
-  padding: 16rpx 24rpx;
+  padding: 8rpx 24rpx;
   box-shadow: var(--md-sys-elevation-level1);
+  overflow: hidden;
 }
 
-.preview-row {
+.preview-column {
   display: flex;
-  gap: 16rpx;
+  flex-direction: column;
+  gap: 0;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 /* ========== 功能区 ========== */

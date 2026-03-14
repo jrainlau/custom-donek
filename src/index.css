@@ -109,6 +109,12 @@
 
   /* ---------- 移动端断点 ---------- */
   --md-breakpoint-mobile: 768px;
+
+  /* ---------- 安全区域（刘海屏/灵动岛适配） ---------- */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
 /* ============================================
@@ -140,6 +146,8 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: none;
+  /* 底部安全区域适配 */
+  padding-bottom: var(--safe-area-bottom);
 }
 
 /* 确保 #root 容器不产生额外高度 */

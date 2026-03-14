@@ -168,7 +168,10 @@ function App() {
         ref={headerRef}
         style={{
           background: 'var(--md-sys-color-surface)',
-          padding: isMobile ? '12px 16px' : '16px 24px',
+          paddingTop: `calc(${isMobile ? '12px' : '16px'} + env(safe-area-inset-top, 0px))`,
+          paddingRight: isMobile ? '16px' : '24px',
+          paddingBottom: isMobile ? '12px' : '16px',
+          paddingLeft: isMobile ? '16px' : '24px',
           color: 'var(--md-sys-color-on-surface)',
           display: 'flex',
           alignItems: 'center',

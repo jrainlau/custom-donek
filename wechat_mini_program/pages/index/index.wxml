@@ -14,8 +14,8 @@
   <!-- 导航栏占位 -->
   <view style="height: {{navBarHeight}}px;"></view>
 
-  <!-- ========== SVG 预览区 ========== -->
-  <view class="preview-section">
+  <!-- ========== SVG 预览区（fixed 在导航栏下方） ========== -->
+  <view class="preview-section" style="top: {{navBarHeight}}px;">
       <view class="snapshot-title">
         <text class="snapshot-title-main">  </text>
       </view>
@@ -48,6 +48,9 @@
         </view>
       </view>
   </view>
+
+  <!-- 预览区占位（预览区 fixed 后需要占位避免内容被遮挡，额外加 16px 间距） -->
+  <view style="height: {{previewHeight + 16}}px;"></view>
 
   <!-- ========== 功能区 ========== -->
   <view class="content-area">

@@ -57,9 +57,10 @@ export default function ColorPickerPanel({
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   // 弹窗编辑器的索引
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
-  // RGB 文本输入
-  const [rgbInputValue, setRgbInputValue] = useState('')
-  const [rgbInputError, setRgbInputError] = useState(false)
+  // 内部维护的「最近复制的 RGB」状态（代替剪贴板读取）
+  const [lastCopiedRgb, setLastCopiedRgb] = useState('')
+  const [lastCopiedHex, setLastCopiedHex] = useState('')
+  const [lastCopiedTextColor, setLastCopiedTextColor] = useState('')
   // 复制反馈
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
@@ -170,15 +171,22 @@ export default function ColorPickerPanel({
     setDragOverIndex(null)
   }, [dragOverIndex, swapColors])
 
-  // --- 复制颜色 ---
+  // --- 复制颜色（同时更新内部状态） ---
   const handleCopyColor = useCallback(
     async (e: React.MouseEvent, index: number) => {
       e.stopPropagation()
-      const rgbStr = hexToRgbString(colors[index])
+      const hex = colors[index]
+      const rgbStr = hexToRgbString(hex)
       const ok = await copyToClipboard(rgbStr)
       if (ok) {
         setCopiedIndex(index)
         setTimeout(() => setCopiedIndex(null), 1500)
+        // 更新内部状态，供弹窗中快捷应用
+        const rgb = hexToRgb(hex)
+        const rgbValue = `${rgb.r},${rgb.g},${rgb.b}`
+        setLastCopiedRgb(rgbValue)
+        setLastCopiedHex(hex)
+        setLastCopiedTextColor(getContrastColor(hex))
       }
     },
     [colors]
@@ -189,17 +197,19 @@ export default function ColorPickerPanel({
     (e: React.MouseEvent, index: number) => {
       e.stopPropagation()
       setEditingIndex(index)
-      const rgb = hexToRgb(colors[index])
-      setRgbInputValue(`${rgb.r},${rgb.g},${rgb.b}`)
-      setRgbInputError(false)
+      // 不再读取剪贴板，直接使用内部维护的 lastCopiedRgb 状态
     },
-    [colors]
+    []
   )
+
+  /** 应用最近复制的 RGB 颜色 */
+  const handleApplyLastCopied = useCallback(() => {
+    if (!lastCopiedRgb || editingIndex === null) return
+    setters[editingIndex](lastCopiedHex)
+  }, [lastCopiedRgb, lastCopiedHex, editingIndex, setters])
 
   const closeEditor = useCallback(() => {
     setEditingIndex(null)
-    setRgbInputValue('')
-    setRgbInputError(false)
   }, [])
 
   // ESC 关闭弹窗
@@ -213,14 +223,11 @@ export default function ColorPickerPanel({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [editingIndex, closeEditor])
 
-  // 弹窗内颜色变化时同步 RGB 输入框
+  // 弹窗内颜色变化时同步
   const handleEditorColorChange = useCallback(
     (hex: string) => {
       if (editingIndex === null) return
       setters[editingIndex](hex)
-      const rgb = hexToRgb(hex)
-      setRgbInputValue(`${rgb.r},${rgb.g},${rgb.b}`)
-      setRgbInputError(false)
     },
     [editingIndex, setters]
   )
@@ -233,32 +240,11 @@ export default function ColorPickerPanel({
       const newRgb = { ...rgb, [ch]: val }
       const hex = rgbToHex(newRgb.r, newRgb.g, newRgb.b)
       setters[editingIndex](hex)
-      setRgbInputValue(`${newRgb.r},${newRgb.g},${newRgb.b}`)
-      setRgbInputError(false)
     },
     [editingIndex, colors, setters]
   )
 
-  // RGB 文本输入处理
-  const handleRgbInput = useCallback(
-    (value: string) => {
-      setRgbInputValue(value)
-      if (editingIndex === null) return
-      const parts = value.split(',')
-      if (parts.length !== 3) {
-        setRgbInputError(value.trim().length > 0)
-        return
-      }
-      const nums = parts.map((p) => parseInt(p.trim(), 10))
-      if (nums.some((n) => isNaN(n) || n < 0 || n > 255)) {
-        setRgbInputError(true)
-        return
-      }
-      setRgbInputError(false)
-      setters[editingIndex](rgbToHex(nums[0], nums[1], nums[2]))
-    },
-    [editingIndex, setters]
-  )
+  // RGB 文本输入处理 - 已移除，改为剪贴板检测
 
   return (
     <div>
@@ -633,56 +619,38 @@ export default function ColorPickerPanel({
                 ))}
               </div>
 
-              {/* RGB 文本输入框 */}
-              <div>
-                <label style={{
-                  display: 'block',
-                  font: 'var(--md-sys-typescale-label-small)',
-                  color: 'var(--md-sys-color-on-surface-variant)',
-                  marginBottom: '4px',
-                }}>
-                  RGB 输入
-                </label>
-                <input
-                  type="text"
-                  value={rgbInputValue}
-                  onChange={(e) => handleRgbInput(e.target.value)}
-                  placeholder="R,G,B（如 178,34,34）"
+              {/* 最近复制的颜色快捷应用按钮 */}
+              {lastCopiedRgb && (
+                <div
+                  onClick={handleApplyLastCopied}
                   style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: 'var(--md-sys-shape-corner-small)',
-                    border: `1px solid ${rgbInputError ? 'var(--md-sys-color-error)' : 'var(--md-sys-color-outline)'}`,
-                    background: 'var(--md-sys-color-surface-container)',
-                    color: 'var(--md-sys-color-on-surface)',
-                    font: 'var(--md-sys-typescale-body-medium)',
+                    padding: '10px 16px',
+                    borderRadius: '24px',
+                    backgroundColor: lastCopiedHex,
+                    color: lastCopiedTextColor,
+                    border: '1px solid var(--md-sys-color-outline-variant)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
                     fontFamily: 'monospace',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 0.2s ease',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    transition: 'opacity 0.2s ease, transform 0.15s ease',
+                    boxShadow: 'var(--md-sys-elevation-level1)',
                   }}
-                  onFocus={(e) => {
-                    if (!rgbInputError) {
-                      e.currentTarget.style.borderColor = 'var(--md-sys-color-primary)'
-                    }
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = '0.85'
+                    e.currentTarget.style.transform = 'scale(0.98)'
                   }}
-                  onBlur={(e) => {
-                    if (!rgbInputError) {
-                      e.currentTarget.style.borderColor = 'var(--md-sys-color-outline)'
-                    }
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = '1'
+                    e.currentTarget.style.transform = 'scale(1)'
                   }}
-                />
-                {rgbInputError && (
-                  <span style={{
-                    font: 'var(--md-sys-typescale-body-small)',
-                    color: 'var(--md-sys-color-error)',
-                    marginTop: '4px',
-                    display: 'block',
-                  }}>
-                    请输入合法的 RGB 值（0-255），以英文逗号分隔
-                  </span>
-                )}
-              </div>
+                >
+                  📋 使用 {lastCopiedRgb} 颜色
+                </div>
+              )}
             </div>
           </>
         )

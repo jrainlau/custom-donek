@@ -66,15 +66,19 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
-/* ========== SVG 预览区 ========== */
+/* ========== SVG 预览区（fixed 在导航栏下方） ========== */
 .snapshot-area {
   background: var(--md-sys-color-surface);
 }
 
 .preview-section {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 90;
   background: var(--md-sys-color-surface);
-  padding: 24rpx 24rpx;
-  box-shadow: var(--md-sys-elevation-level1);
+  padding: 16rpx 24rpx;
+  box-shadow: var(--md-sys-elevation-level2);
   overflow: hidden;
 }
 

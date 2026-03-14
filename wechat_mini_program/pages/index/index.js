@@ -37,6 +37,8 @@ Page({
     colorLabels: ['板面背景', '板面 logo', '板底背景', '板底 logo'],
     // 截图区域显示的配色信息
     snapshotColors: [],
+    // 预览区域高度（用于占位，预览区 fixed 后需要）
+    previewHeight: 0,
   },
 
   _debounceTimer: null,
@@ -56,6 +58,24 @@ Page({
 
     // 初始化截图配色信息
     this._updateSnapshotColors()
+  },
+
+  onReady: function () {
+    // 计算 fixed 预览区的高度，用于占位
+    this._measurePreviewHeight()
+  },
+
+  _measurePreviewHeight: function () {
+    var self = this
+    setTimeout(function () {
+      var query = wx.createSelectorQuery()
+      query.select('.preview-section').boundingClientRect(function (rect) {
+        if (rect) {
+          self.setData({ previewHeight: rect.height })
+        }
+      })
+      query.exec()
+    }, 100)
   },
 
   // 更新截图区域的配色信息

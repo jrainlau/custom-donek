@@ -68,7 +68,12 @@
 
 /* ========== SVG 预览区（fixed 在导航栏下方） ========== */
 .snapshot-area {
-  background: var(--md-sys-color-surface);
+  background-color: #e0e0e0;
+  background-image:
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%),
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%);
+  background-size: 30rpx 30rpx;
+  background-position: 0 0, 15rpx 15rpx;
 }
 
 .preview-section {
@@ -76,7 +81,12 @@
   left: 0;
   right: 0;
   z-index: 90;
-  background: var(--md-sys-color-surface);
+  background-color: #aaa9a9;
+  background-image:
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%),
+    linear-gradient(45deg, #c0c0c0 25%, transparent 25%, transparent 75%, #c0c0c0 75%);
+  background-size: 80rpx 80rpx;
+  background-position: 0 0, 40rpx 40rpx;
   padding: 16rpx 24rpx;
   box-shadow: var(--md-sys-elevation-level2);
   overflow: hidden;

@@ -76,9 +76,6 @@ export default function SvgPreview({
         `<svg id="${instanceId}" shape-rendering="geometricPrecision" style="width:auto;height:100%;max-width:100%;display:block;"`
       )
     }
-    // 将内部固定 id 替换为唯一 id，避免多实例 clipPath 冲突
-    svg = svg.replace(/id="board-outline"/g, `id="board-outline-${instanceId}"`)
-    svg = svg.replace(/url\(#board-outline\)/g, `url(#board-outline-${instanceId})`)
     return svg
   }, [svgRaw, instanceId, compact])
 
@@ -133,7 +130,7 @@ export default function SvgPreview({
     if (wMatch && hMatch) {
       return { w: Number(wMatch[1]), h: Number(hMatch[1]) }
     }
-    return { w: 190, h: 1000 }
+    return { w: 930, h: 4290 }
   }, [svgRaw])
 
   // compact 模式下旋转后：原始宽高互换，计算旋转后的宽高比

@@ -97,10 +97,6 @@ Component({
         '.' + secondaryClass + ' { fill: ' + secondaryColor + '; }'
       )
 
-      // 为 clipPath id 添加实例前缀，避免多 SVG 冲突
-      svg = svg.replace(/id="board-outline"/g, 'id="board-outline-' + instanceId + '"')
-      svg = svg.replace(/url\(#board-outline\)/g, 'url(#board-outline-' + instanceId + ')')
-
       // 提取原始 width/height 用于 viewBox
       var wMatch = svg.match(/\bwidth="(\d+)"/)
       var hMatch = svg.match(/\bheight="(\d+)"/)
@@ -114,7 +110,7 @@ Component({
       if (!hasViewBox && wMatch && hMatch) {
         svg = svg.replace('<svg', '<svg viewBox="0 0 ' + wMatch[1] + ' ' + hMatch[1] + '"')
       } else if (!hasViewBox) {
-        svg = svg.replace('<svg', '<svg viewBox="0 0 190 1000"')
+        svg = svg.replace('<svg', '<svg viewBox="636 60 930 4290"')
       }
 
       // 添加宽高样式使 SVG 自适应

@@ -10,8 +10,8 @@ import type { M3ColorResult } from './m3color'
 import { generateM3Palette } from './m3color'
 
 // 导入 SVG 原始文本
-import topsheetSvgRaw from './assets/Topsheet.svg?raw'
-import baseSvgRaw from './assets/Base.svg?raw'
+import topsheetSvgRaw from './assets/topsheet2.svg?raw'
+import baseSvgRaw from './assets/base2.svg?raw'
 
 /** 自定义 hook：监听媒体查询 */
 function useMediaQuery(query: string): boolean {

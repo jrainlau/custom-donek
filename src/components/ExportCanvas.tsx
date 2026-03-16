@@ -51,9 +51,6 @@ export default function ExportCanvas({
         /\.color-pattern\s*\{[^}]*\}/g,
         `.color-pattern { fill: ${basePattern}; }`
       )
-    // 为导出画布中的 clipPath id 添加唯一前缀，避免与预览区冲突
-    svg = svg.replace(/id="board-outline"/g, 'id="board-outline-export"')
-    svg = svg.replace(/url\(#board-outline\)/g, 'url(#board-outline-export)')
     return svg
   }, [baseSvg, basePattern, baseBg])
 

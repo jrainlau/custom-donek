@@ -1,10 +1,4 @@
 <view class="user-schemes">
-  <!-- 标题 + 保存按钮 -->
-  <view class="section-header">
-    <text class="section-title">💾 我的配色</text>
-    <view class="save-btn" bindtap="onSave">保存当前配色</view>
-  </view>
-
   <!-- 已保存配色列表 -->
   <view class="empty-tip" wx:if="{{schemes.length === 0}}">
     <text>还没有保存的配色方案</text>

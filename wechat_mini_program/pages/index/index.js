@@ -30,6 +30,12 @@ Page({
     showSeedPicker: false,
     seedError: '',
 
+    // 配色 TAB 状态
+    colorTab: 'preset',
+    userSchemesCount: 0,
+    // 保存配色触发器
+    saveTrigger: 0,
+
     // 导出状态
     exporting: false,
 
@@ -58,6 +64,14 @@ Page({
 
     // 初始化截图配色信息
     this._updateSnapshotColors()
+
+    // 初始化时查询用户配色数量，决定默认 TAB
+    var userSchemes = storage.getAllSchemes()
+    var count = userSchemes.length
+    this.setData({
+      userSchemesCount: count,
+      colorTab: count > 0 ? 'user' : 'preset',
+    })
   },
 
   onReady: function () {
@@ -163,6 +177,24 @@ Page({
     } else {
       this.setData({ seedError: '配色生成失败，请尝试其他颜色' })
     }
+  },
+
+  // ========== 配色 TAB 切换 ==========
+
+  onSwitchTab: function (e) {
+    this.setData({ colorTab: e.currentTarget.dataset.tab })
+  },
+
+  onSchemesCountChange: function (e) {
+    this.setData({ userSchemesCount: e.detail.count })
+  },
+
+  // 保存当前配色（从颜色配置卡片底部触发）
+  onSaveScheme: function () {
+    this.setData({
+      saveTrigger: this.data.saveTrigger + 1,
+      colorTab: 'user',
+    })
   },
 
   // ========== 预设配色事件 ==========

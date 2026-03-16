@@ -70,26 +70,41 @@
         bindseedcolorchange="onSeedColorChange"
         bindgenerate="onGenerate"
       />
+      <!-- 保存当前配色按钮 -->
+      <view class="save-scheme-btn" bindtap="onSaveScheme">保存当前配色</view>
     </view>
 
-    <!-- 预设配色模板 -->
+    <!-- 配色方案（预设 + 我的 TAB 合并卡片） -->
     <view class="card">
-      <preset-templates
-        activeSchemeId="{{activeSchemeId}}"
-        bindselect="onPresetSelect"
-      />
-    </view>
+      <!-- TAB 栏 -->
+      <view class="color-tab-bar">
+        <view class="color-tab-item {{colorTab === 'preset' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="preset">
+          <text>🎯 预设配色</text>
+        </view>
+        <view class="color-tab-item {{colorTab === 'user' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="user">
+          <text>💾 我的配色{{userSchemesCount > 0 ? ' (' + userSchemesCount + ')' : ''}}</text>
+        </view>
+      </view>
 
-    <!-- 用户自定义配色 -->
-    <view class="card">
-      <user-schemes
-        topPrimary="{{topPrimary}}"
-        topSecondary="{{topSecondary}}"
-        basePattern="{{basePattern}}"
-        baseBg="{{baseBg}}"
-        activeSchemeId="{{activeSchemeId}}"
-        bindselect="onUserSchemeSelect"
-      />
+      <!-- TAB 内容 -->
+      <view wx:if="{{colorTab === 'preset'}}">
+        <preset-templates
+          activeSchemeId="{{activeSchemeId}}"
+          bindselect="onPresetSelect"
+        />
+      </view>
+      <view wx:if="{{colorTab === 'user'}}">
+        <user-schemes
+          topPrimary="{{topPrimary}}"
+          topSecondary="{{topSecondary}}"
+          basePattern="{{basePattern}}"
+          baseBg="{{baseBg}}"
+          activeSchemeId="{{activeSchemeId}}"
+          saveTrigger="{{saveTrigger}}"
+          bindselect="onUserSchemeSelect"
+          bindschemescountchange="onSchemesCountChange"
+        />
+      </view>
     </view>
   </view>
 

@@ -14,17 +14,6 @@ export default function PresetTemplates({
 }: PresetTemplatesProps) {
   return (
     <div>
-      <h3
-        style={{
-          font: 'var(--md-sys-typescale-title-medium)',
-          color: 'var(--md-sys-color-on-surface)',
-          marginBottom: '12px',
-          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
-          paddingBottom: '8px',
-        }}
-      >
-        🎯 预设配色
-      </h3>
       <div
         style={{
           display: 'grid',

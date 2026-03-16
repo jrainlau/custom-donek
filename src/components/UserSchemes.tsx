@@ -11,12 +11,18 @@ interface UserSchemesProps {
   }
   activeSchemeId: string | null
   onSelect: (scheme: ColorScheme) => void
+  onSchemesCountChange?: (count: number) => void
+  isMobile?: boolean
+  saveTrigger?: number
 }
 
 export default function UserSchemes({
   currentColors,
   activeSchemeId,
   onSelect,
+  onSchemesCountChange,
+  isMobile = false,
+  saveTrigger = 0,
 }: UserSchemesProps) {
   const [schemes, setSchemes] = useState<SavedColorScheme[]>([])
   const [isFallback] = useState(isUsingFallback)
@@ -27,7 +33,8 @@ export default function UserSchemes({
     // 按创建时间倒序
     all.sort((a, b) => b.createdAt - a.createdAt)
     setSchemes(all)
-  }, [])
+    onSchemesCountChange?.(all.length)
+  }, [onSchemesCountChange])
 
   useEffect(() => {
     loadSchemes()
@@ -49,6 +56,14 @@ export default function UserSchemes({
     await loadSchemes()
   }, [currentColors, loadSchemes])
 
+  // 外部触发保存（saveTrigger 变化时）
+  useEffect(() => {
+    if (saveTrigger > 0) {
+      handleSave()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveTrigger])
+
   // 删除配色
   const handleDelete = useCallback(
     async (id: string, e: React.MouseEvent) => {
@@ -63,45 +78,6 @@ export default function UserSchemes({
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '12px',
-          borderBottom: '1px solid var(--md-sys-color-outline-variant)',
-          paddingBottom: '8px',
-        }}
-      >
-        <h3
-          style={{
-            font: 'var(--md-sys-typescale-title-medium)',
-            color: 'var(--md-sys-color-on-surface)',
-            margin: 0,
-          }}
-        >
-          💾 我的配色
-        </h3>
-        <button
-          onClick={handleSave}
-          style={{
-            padding: '8px 20px',
-            borderRadius: '20px',
-            border: 'none',
-            background: 'var(--md-sys-color-secondary-container)',
-            color: 'var(--md-sys-color-on-secondary-container)',
-            font: 'var(--md-sys-typescale-label-large)',
-            cursor: 'pointer',
-            transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
-            boxShadow: 'var(--md-sys-elevation-level1)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)')}
-          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)')}
-        >
-          保存当前配色
-        </button>
-      </div>
-
       {isFallback && (
         <div
           style={{
@@ -133,8 +109,8 @@ export default function UserSchemes({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-            gap: '10px',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: '12px',
           }}
         >
           {schemes.map((scheme) => {

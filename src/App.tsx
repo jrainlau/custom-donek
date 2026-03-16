@@ -5,6 +5,7 @@ import PresetTemplates from './components/PresetTemplates'
 import UserSchemes from './components/UserSchemes'
 import ExportCanvas from './components/ExportCanvas'
 import { DEFAULT_SCHEME } from './presets'
+import { getAllSchemes } from './db'
 import type { ColorScheme } from './types'
 import type { M3ColorResult } from './m3color'
 import { generateM3Palette } from './m3color'
@@ -150,6 +151,34 @@ function App() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
+  }, [])
+
+  // === 配色 TAB 状态 ===
+  // userSchemesCount 跟踪用户已保存配色数量
+  const [userSchemesCount, setUserSchemesCount] = useState(0)
+  // TAB: 'preset' | 'user'
+  const [colorTab, setColorTab] = useState<'preset' | 'user'>('preset')
+
+  // 初始化时查询用户配色数量，决定默认 TAB
+  useEffect(() => {
+    getAllSchemes().then((all) => {
+      setUserSchemesCount(all.length)
+      if (all.length > 0) {
+        setColorTab('user')
+      }
+    })
+  }, [])
+
+  const handleSchemesCountChange = useCallback((count: number) => {
+    setUserSchemesCount(count)
+  }, [])
+
+  // === 保存配色触发器 ===
+  const [saveTrigger, setSaveTrigger] = useState(0)
+  const handleSaveScheme = useCallback(() => {
+    setSaveTrigger((prev) => prev + 1)
+    // 保存后自动切换到“我的配色”TAB
+    setColorTab('user')
   }, [])
 
   // 移动端检测
@@ -354,9 +383,32 @@ function App() {
               onToggleSeedPicker={handleToggleSeedPicker}
               error={seedError}
             />
+
+            {/* 保存当前配色按钮 */}
+            <div style={{ marginTop: '16px' }}>
+              <button
+                onClick={handleSaveScheme}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  background: 'var(--md-sys-color-primary)',
+                  color: 'var(--md-sys-color-on-primary)',
+                  font: 'var(--md-sys-typescale-label-large)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+                  boxShadow: 'var(--md-sys-elevation-level1)',
+                  width: isMobile ? '100%' : 'fit-content',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level2)')}
+                onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'var(--md-sys-elevation-level1)')}
+              >
+                保存当前配色
+              </button>
+            </div>
           </div>
 
-          {/* 预设配色模板 */}
+          {/* 配色方案（预设 + 我的 TAB 合并卡片） */}
           <div
             style={{
               background: 'var(--md-sys-color-surface-container-low)',
@@ -365,27 +417,59 @@ function App() {
               boxShadow: 'var(--md-sys-elevation-level1)',
             }}
           >
-            <PresetTemplates
-              activeSchemeId={activeSchemeId}
-              onSelect={applyScheme}
-              isMobile={isMobile}
-            />
-          </div>
+            {/* TAB 栏 */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '0',
+                marginBottom: '16px',
+                borderBottom: '2px solid var(--md-sys-color-outline-variant)',
+              }}
+            >
+              {(['preset', 'user'] as const).map((tab) => {
+                const isActive = colorTab === tab
+                const label = tab === 'preset' ? '🎯 预设配色' : `💾 我的配色${userSchemesCount > 0 ? ` (${userSchemesCount})` : ''}`
+                return (
+                  <button
+                    key={tab}
+                    onClick={() => setColorTab(tab)}
+                    style={{
+                      flex: 1,
+                      padding: '10px 16px',
+                      font: 'var(--md-sys-typescale-label-large)',
+                      color: isActive ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-on-surface-variant)',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: isActive ? '2px solid var(--md-sys-color-primary)' : '2px solid transparent',
+                      marginBottom: '-2px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s var(--md-sys-motion-easing-standard)',
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
 
-          {/* 用户自定义配色 */}
-          <div
-            style={{
-              background: 'var(--md-sys-color-surface-container-low)',
-              borderRadius: 'var(--md-sys-shape-corner-large)',
-              padding: '20px',
-              boxShadow: 'var(--md-sys-elevation-level1)',
-            }}
-          >
-            <UserSchemes
-              currentColors={{ topPrimary, topSecondary, basePattern, baseBg }}
-              activeSchemeId={activeSchemeId}
-              onSelect={applyScheme}
-            />
+            {/* TAB 内容 */}
+            {colorTab === 'preset' ? (
+              <PresetTemplates
+                activeSchemeId={activeSchemeId}
+                onSelect={applyScheme}
+                isMobile={isMobile}
+              />
+            ) : (
+              <UserSchemes
+                currentColors={{ topPrimary, topSecondary, basePattern, baseBg }}
+                activeSchemeId={activeSchemeId}
+                onSelect={applyScheme}
+                onSchemesCountChange={handleSchemesCountChange}
+                isMobile={isMobile}
+                saveTrigger={saveTrigger}
+              />
+            )}
           </div>
         </div>
       </div>

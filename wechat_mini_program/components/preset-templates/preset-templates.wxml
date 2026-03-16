@@ -1,5 +1,4 @@
 <view class="preset-templates">
-  <text class="section-title">🎯 预设配色</text>
   <view class="preset-grid">
     <view
       wx:for="{{schemes}}"

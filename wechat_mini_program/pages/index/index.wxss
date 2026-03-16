@@ -174,3 +174,43 @@
   font-family: monospace;
   color: var(--md-sys-color-on-surface-variant);
 }
+
+/* ========== 配色 TAB 栏 ========== */
+.color-tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24rpx;
+  border-bottom: 2rpx solid var(--md-sys-color-outline-variant);
+}
+
+.color-tab-item {
+  flex: 1;
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface-variant);
+  border-bottom: 4rpx solid transparent;
+  margin-bottom: -2rpx;
+  transition: all 0.2s;
+}
+
+.color-tab-item.active {
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  border-bottom-color: var(--md-sys-color-primary);
+}
+
+/* ========== 保存配色按钮（颜色配置卡片底部） ========== */
+.save-scheme-btn {
+  margin-top: 24rpx;
+  width: 100%;
+  padding: 20rpx 0;
+  border-radius: 40rpx;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: 28rpx;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: var(--md-sys-elevation-level1);
+}

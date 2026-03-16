@@ -8,6 +8,16 @@ Component({
     basePattern: { type: String, value: '' },
     baseBg: { type: String, value: '' },
     activeSchemeId: { type: String, value: '' },
+    // 外部触发保存（递增时触发）
+    saveTrigger: { type: Number, value: 0 },
+  },
+
+  observers: {
+    'saveTrigger': function (val) {
+      if (val > 0) {
+        this.onSave()
+      }
+    },
   },
 
   data: {
@@ -28,6 +38,8 @@ Component({
         return b.createdAt - a.createdAt
       })
       this.setData({ schemes: all })
+      // 通知父组件配色数量变化
+      this.triggerEvent('schemescountchange', { count: all.length })
     },
 
     // 保存当前配色

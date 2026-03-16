@@ -2,7 +2,7 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 # 设置 GITHUB_TOKEN 的权限，允许部署到 GitHub Pages
 permissions:
